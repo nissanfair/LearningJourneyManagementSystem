@@ -26,17 +26,54 @@ class JobRole(db.Model):
     __tablename__ = 'jobrole'
     jobrole_id = db.Column(db.Integer, primary_key=True)
     jobrole_name = db.Column(db.String(255), nullable=False)
+    roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
 
-    def __init__(self, jobrole_id, jobrole_name):
+    def __init__(self, jobrole_id, jobrole_name, roleskills = []):
         self.jobrole_id = jobrole_id
         self.jobrole_name = jobrole_name
+        self.roleskills = roleskills
 
     def json(self):
         return {
                 "jobrole_id": self.jobrole_id,
-                "jobrole_name": self.jobrole_name
+                "jobrole_name": self.jobrole_name,
+                "roleskills": [roleskill.json() for roleskill in self.roleskills]
             }
 
+class Skill(db.Model):
+    __tablename__ = 'skill'
+    skill_id = db.Column(db.Integer, primary_key=True)
+    skill_name = db.Column(db.String(255), nullable=False)
+    roleskills = db.relationship('RoleSkill', backref='skill', lazy=True)
+
+    def __init__(self, skill_id, skill_name, roleskills = []):
+        self.skill_id = skill_id
+        self.skill_name = skill_name
+        self.roleskills = roleskills
+
+    def json(self):
+        return {
+                "skill_id": self.skill_id,
+                "skill_name": self.skill_name
+            }
+
+class RoleSkill(db.Model):
+    __tablename__ = 'roleskill'
+    rsid = db.Column(db.Integer, primary_key=True)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
+    jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
+
+    def __init__(self, rsid, skill_id, jobrole_id):
+        self.rsid = rsid
+        self.skill_id = skill_id
+        self.jobrole_id = jobrole_id
+
+    def json(self):
+        return {
+                "rsid": self.rsid,
+                "skill_id": self.skill_id,
+                "jobrole_id": self.jobrole_id
+            }
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -161,8 +198,47 @@ def home():
     <a href='/getstaff'>get staffs</a>
     <a href='/getrole'>get roles</a>
     <a href='/jobrole'>get jobroles</a>
+    <a href='/getskill'>get skills</a>
+    <a href='/getroleskill'>get roleskills</a>
     """
 
+@app.route('/getskill')
+def getskill():
+    skills = Skill.query.all()
+    if len(skills):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "skills": [skill.json() for skill in skills]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no skills."
+        }
+    ), 404
+
+@app.route('/getroleskill')
+def getroleskill():
+    roleskills = RoleSkill.query.all()
+    if len(roleskills):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "roleskills": [roleskill.json() for roleskill in roleskills]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no roleskills."
+        }
+    ), 404
 
 @app.route('/getstaff')
 def getstaff():

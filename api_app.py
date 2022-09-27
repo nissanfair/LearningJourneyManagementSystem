@@ -54,7 +54,8 @@ class Skill(db.Model):
     def json(self):
         return {
                 "skill_id": self.skill_id,
-                "skill_name": self.skill_name
+                "skill_name": self.skill_name,
+                "roleskills": [roleskill.json() for roleskill in self.roleskills]
             }
 
 class RoleSkill(db.Model):
@@ -196,7 +197,7 @@ def home():
     return """
     <h1>Hello! this links are to test the backend, expect json files from them.</h1>
     <a href='/getstaff'>get staffs</a>
-    <a href='/getrole'>get roles</a>
+    <a href='/role'>get roles</a>
     <a href='/jobrole'>get jobroles</a>
     <a href='/getskill'>get skills</a>
     <a href='/getroleskill'>get roleskills</a>

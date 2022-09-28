@@ -196,15 +196,15 @@ def add_values(): #THIS IS EXAMPLE TO ADD VALUES TO DB (CURRENTLY NOT USED AS WE
 def home():
     return """
     <h1>Hello! this links are to test the backend, expect json files from them.</h1>
-    <a href='/getstaff'>get staffs</a>
+    <a href='/staff'>get staffs</a>
     <a href='/role'>get roles</a>
     <a href='/jobrole'>get jobroles</a>
-    <a href='/getskill'>get skills</a>
-    <a href='/getroleskill'>get roleskills</a>
+    <a href='/skill'>get skills</a>
+    <a href='/roleskill'>get roleskills</a>
     """
 
-@app.route('/getskill')
-def getskill():
+@app.route('/skill')
+def skill():
     skills = Skill.query.all()
     if len(skills):
         return jsonify(
@@ -222,8 +222,25 @@ def getskill():
         }
     ), 404
 
-@app.route('/getroleskill')
-def getroleskill():
+@app.route('/skill/<int:skill_id>')
+def find_skill(skill_id):
+    skill = Skill.query.filter_by(skill_id=skill_id).first()
+    if skill:
+        return jsonify(
+            {
+                "code": 200,
+                "data": skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Skill not found."
+        }
+    ), 404
+
+@app.route('/roleskill')
+def roleskill():
     roleskills = RoleSkill.query.all()
     if len(roleskills):
         return jsonify(
@@ -241,8 +258,25 @@ def getroleskill():
         }
     ), 404
 
-@app.route('/getstaff')
-def getstaff():
+@app.route('/roleskill/<int:roleskill_id>')
+def find_roleskill(roleskill_id):
+    roleskill = RoleSkill.query.filter_by(roleskill_id=roleskill_id).first()
+    if roleskill:
+        return jsonify(
+            {
+                "code": 200,
+                "data": roleskill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Roleskill not found."
+        }
+    ), 404
+
+@app.route('/staff')
+def staff():
     staffs = Staff.query.all()
 
     if len(staffs):
@@ -262,8 +296,25 @@ def getstaff():
         }
     ), 404
 
+@app.route('/staff/<int:staff_id>')
+def find_staff(staff_id):
+    staff = Staff.query.filter_by(staff_id=staff_id).first()
+    if staff:
+        return jsonify(
+            {
+                "code": 200,
+                "data": staff.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Staff not found."
+        }
+    ), 404
+
 @app.route('/role')
-def getrole():
+def role():
     roles = Role.query.all()
 
     if len(roles):
@@ -280,6 +331,23 @@ def getrole():
         {
             "code": 404,
             "message": "There are no roles."
+        }
+    ), 404
+
+@app.route('/role/<int:role_id>')
+def find_role(role_id):
+    role = Role.query.filter_by(role_id=role_id).first()
+    if role:
+        return jsonify(
+            {
+                "code": 200,
+                "data": role.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Role not found."
         }
     ), 404
 

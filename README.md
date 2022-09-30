@@ -1,5 +1,12 @@
 # ljms_spm
 
+#Frontend
+<ol>
+  <li>Home</li>
+  <li>Roles</li>
+  <li>Skills</li>
+</ol>
+
 # Backend
 <ol>
   <li>Run wamp</li>

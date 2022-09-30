@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+
 
 
 
@@ -284,6 +285,58 @@ def find_skill(skill_id):
             "message": "Skill not found."
         }
     ), 404
+
+#add skill
+@app.route('/skill', methods=['POST'])
+def add_skill():
+    data = request.get_json()
+    skill = Skill(**data)
+    try:
+        db.session.add(skill)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "skill_id": data['skill_id']
+                },
+                "message": "An error occurred while creating the skill."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": skill.json()
+        }
+    ), 201
+
+#add role
+@app.route('/role', methods=['POST'])
+def add_role():
+    data = request.get_json()
+    role = Role(**data)
+    try:
+        db.session.add(role)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "role_id": data['role_id']
+                },
+                "message": "An error occurred while creating the role."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": role.json()
+        }
+    ), 201
 
 @app.route('/roleskill')
 def roleskill():

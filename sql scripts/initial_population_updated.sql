@@ -110,7 +110,7 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`) VALUES
 (1, 'Data Analyst');
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
-(1, 'Data structures');
+(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`) VALUES
 (1, 'LJ to be swe');

@@ -48,13 +48,15 @@ class Skill(db.Model):
     skill_desc = db.Column(db.String(255))
     roleskills = db.relationship('RoleSkill', backref='skill', lazy=True)
     courseskills = db.relationship('CourseSkill', backref='skill', lazy=True)
+    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = []):
+    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = [], isDeleted = False):
         self.skill_id = skill_id
         self.skill_name = skill_name
         self.skill_desc = skill_desc
         self.roleskills = roleskills
         self.courseskills = courseskills
+        self.isDeleted = isDeleted
 
     def json(self):
         return {
@@ -62,7 +64,8 @@ class Skill(db.Model):
                 "skill_name": self.skill_name,
                 "skill_desc": self.skill_desc,
                 "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "courseskills": [courseskill.json() for courseskill in self.courseskills]
+                "courseskills": [courseskill.json() for courseskill in self.courseskills],
+                "isDeleted": self.isDeleted
             }
 
 class RoleSkill(db.Model):
@@ -314,6 +317,30 @@ def add_skill():
             "data": skill.json()
         }
     ), 201
+
+#soft delete skill
+@app.route('/skill/<int:skill_id>/softdelete')
+def soft_delete_skill(skill_id):
+    skill = Skill.query.filter_by(skill_id=skill_id).first()
+    if skill:
+        if not skill.isDeleted:
+            skill.isDeleted = True
+        else:
+            skill.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Skill not found."
+        }
+    ), 404
 
 #add role
 @app.route('/role', methods=['POST'])

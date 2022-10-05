@@ -55,6 +55,7 @@ KEY `jobrole_name` (`jobrole_name`)
 CREATE TABLE `skill` (
 `skill_id` int NOT NULL auto_increment,
 `skill_name` varchar(255) NOT NULL,
+`skill_desc` varchar(255) DEFAULT NULL,
 PRIMARY KEY (`skill_id`),
 KEY `skill_name` (`skill_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

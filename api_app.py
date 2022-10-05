@@ -45,12 +45,14 @@ class Skill(db.Model):
     __tablename__ = 'skill'
     skill_id = db.Column(db.Integer, primary_key=True)
     skill_name = db.Column(db.String(255), nullable=False)
+    skill_desc = db.Column(db.String(255))
     roleskills = db.relationship('RoleSkill', backref='skill', lazy=True)
     courseskills = db.relationship('CourseSkill', backref='skill', lazy=True)
 
-    def __init__(self, skill_id, skill_name, roleskills = [], courseskills = []):
+    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = []):
         self.skill_id = skill_id
         self.skill_name = skill_name
+        self.skill_desc = skill_desc
         self.roleskills = roleskills
         self.courseskills = courseskills
 
@@ -58,6 +60,7 @@ class Skill(db.Model):
         return {
                 "skill_id": self.skill_id,
                 "skill_name": self.skill_name,
+                "skill_desc": self.skill_desc,
                 "roleskills": [roleskill.json() for roleskill in self.roleskills],
                 "courseskills": [courseskill.json() for courseskill in self.courseskills]
             }

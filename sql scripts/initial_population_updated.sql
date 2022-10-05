@@ -109,7 +109,7 @@ INSERT INTO `Registration` (`Reg_ID`, `Course_ID`, `Staff_ID`, `Reg_Status`, `Co
 INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`) VALUES
 (1, 'Data Analyst');
 
-INSERT INTO `skill` (`skill_id`, `skill_name`) VALUES
+INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
 (1, 'Data structures');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`) VALUES

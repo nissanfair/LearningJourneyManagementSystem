@@ -260,18 +260,60 @@ def home():
 def skill():
     skills = Skill.query.all()
     if len(skills):
+
+        skills_not_softdeleted = [skill.json() for skill in skills if not skill.isDeleted]
+
+        if len(skills_not_softdeleted):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "skills": skills_not_softdeleted
+                    }
+                }
+            )
+        
         return jsonify(
             {
-                "code": 200,
-                "data": {
-                    "skills": [skill.json() for skill in skills]
-                }
+                "code": 404,
+                "message": "No skills found that are non softdeleted."
             }
         )
+
     return jsonify(
         {
             "code": 404,
             "message": "There are no skills."
+        }
+    ), 404
+
+@app.route('/skill/softdeleted')
+def skill_softdeleted():
+    skills = Skill.query.all()
+    if len(skills):
+        softdeleted_skills = [skill.json() for skill in skills if skill.isDeleted]
+
+        if len(softdeleted_skills):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "skills": softdeleted_skills
+                    }
+                }
+            )
+
+        return jsonify(
+            {
+                "code": 404,
+                "message": "No skills found that are softdeleted."
+            }
+        )
+        
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no skills in the database."
         }
     ), 404
 

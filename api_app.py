@@ -91,17 +91,20 @@ class Role(db.Model):
 
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(20), nullable=False)
+    role_desc = db.Column(db.String(128), nullable = True)
     staffs = db.relationship('Staff', backref='Role', lazy=True)
 
-    def __init__(self,role_id,role_name,staffs = list()):
+    def __init__(self,role_id,role_name,role_desc,staffs = list()):
         self.role_id = role_id
         self.role_name = role_name
+        self.role_desc = role_desc
         self.staffs = staffs
 
     def json(self):
         return {
             "role_id": self.role_id,
-            "role_name": self.role_name
+            "role_name": self.role_name,
+            "role_desc": self.role_desc
         }
 
 
@@ -212,7 +215,7 @@ class Registration(db.Model):
 # db.create_all()
 
 def add_values(): #THIS IS EXAMPLE TO ADD VALUES TO DB (CURRENTLY NOT USED AS WE PRIORITISE READ OVER OTHER OPERATIONS)
-    role1 = Role(role_id = 1, role_name = 'Admin', staffs=[])
+    role1 = Role(role_id = 1, role_name = 'Admin', role_desc = 'Responsible for administrative matters' ,staffs=[])
 
 
     staff1 = Staff(staff_id = 1,
@@ -519,6 +522,30 @@ def find_role(role_id):
         {
             "code": 404,
             "message": "Role not found."
+        }
+    ), 404
+
+#soft delete role
+@app.route('/role/<int:role_id>/softdelete')
+def soft_delete_role(role_id):
+    role = Role.query.filter_by(role_id=role_id).first()
+    if role:
+        if not role.isDeleted:
+            role.isDeleted = True
+        else:
+            role.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": role.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "role not found."
         }
     ), 404
 

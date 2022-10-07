@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy import func
 
 
 
@@ -342,6 +343,14 @@ def find_skill(skill_id):
 def add_skill():
     data = request.get_json()
     skill = Skill(**data, skill_id = Skill.query.count() + 1)
+    skill_name = data['skill_name'].lower()
+    if (Skill.query.filter(func.lower(Skill.skill_name)== skill_name).first()):
+        return jsonify(
+            {
+                "code": 400,
+                "message": "skill already exists."
+            }
+        ), 400
     try:
         db.session.add(skill)
         db.session.commit()
@@ -392,6 +401,14 @@ def soft_delete_skill(skill_id):
 def add_role():
     data = request.get_json()
     role = Role(**data)
+    role_name = data['role_name'].lower()
+    if (Role.query.filter(func.lower(Role.role_name)== role_name).first()):
+        return jsonify(
+            {
+                "code": 400,
+                "message": "role already exists."
+            }
+        ), 400
     try:
         db.session.add(role)
         db.session.commit()

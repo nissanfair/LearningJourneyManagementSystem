@@ -7,6 +7,7 @@ const app1 = Vue.createApp({
       skillName : "",
       skillDesc : "",
       disabled : false,
+      message : "",
       skills: "", // Placeholder for now it is to hold all the skills coming from the back end
     };
   },
@@ -115,7 +116,14 @@ const app1 = Vue.createApp({
       .get(url)
       .then((response) => {
         // process response.data object
-        this.skills = response.data.data.skills;
+        console.log(response.data.code)
+        if(response.data.code == 200){
+          this.skills = response.data.data.skills;
+        }
+        else{
+          this.message = "<p>There are no skills currently available</p>"
+        }
+        
       })
       .catch((error) => {
         // process error object

@@ -1,3 +1,17 @@
+console.log("skills.js load!");
+var url = "http://localhost:5000/skill";
+axios
+.get(url)
+.then((response) => {
+  // process response.data object
+  console.log("axios get");
+  console.log(response.data);
+  console.log(response.data.data.skills);
+  this.skills = response.data.data.skills;
+})
+.catch((error) => {
+  // process error object
+});
 const app1 = Vue.createApp({
   data() {
     return {

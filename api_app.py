@@ -338,7 +338,7 @@ def find_skill(skill_id):
 @app.route('/skill', methods=['POST'])
 def add_skill():
     data = request.get_json()
-    skill = Skill(**data)
+    skill = Skill(**data, skill_id = Skill.query.count() + 1)
     try:
         db.session.add(skill)
         db.session.commit()

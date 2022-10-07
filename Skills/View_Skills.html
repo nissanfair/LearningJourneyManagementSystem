@@ -99,7 +99,7 @@
     </div>
   </header>
 
-<main>
+<main id="app">
 
   <section class="py-5 text-center container">
     <div class="row py-lg-5">
@@ -113,7 +113,7 @@
     </div>
   </section>
 
-  <div class="album py-5 bg-light" id="app">
+  <div class="album py-5 bg-light">
     <div class="container">
 
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
@@ -164,17 +164,17 @@
 
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label">Skill Name</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+          <input type="email" class="form-control" id="exampleFormControlInput1" v-model="skillName" placeholder="name@example.com">
         </div>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Skill Description</label>
-          <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" v-model="skillDesc" rows="3"></textarea>
         </div>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary btn-primary">Create</button>
+        <button type="button" class="btn btn-primary btn-primary" @click="create">Create</button>
       </div>
     </div>
   </div>

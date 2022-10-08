@@ -79,6 +79,7 @@ const app1 = Vue.createApp({
         })
         .then(response => {
         // process response.data
+        console.log("create response:" + response.data.code)
         stat = response.data.code;
         if (stat) {
           Swal.fire("Created!", "Skill has been created.", "success").then((result) => {
@@ -90,22 +91,27 @@ const app1 = Vue.createApp({
             }
           })
         } 
-        else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
-          });
-        }
 
         })
         .catch(error => {
         // process error object
+        this.disabled = false
+        console.log(error.response.status)
+
+        if(error.response.status){
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Something went wrong!",
+          text: "Skill already Exists!",
         });
+      }
+      else{
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Oops Something Went Wrong!",
+        });
+      }
         
         });
     }

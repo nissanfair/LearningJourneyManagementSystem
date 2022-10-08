@@ -73,47 +73,62 @@ const app1 = Vue.createApp({
 
       //Axios post 
       url="http://localhost:5000/skill"
-      axios.post(url, {
-        skill_name : this.skillName,
-        skill_desc : this.skillDesc
-        })
-        .then(response => {
-        // process response.data
-        console.log("create response:" + response.data.code)
-        stat = response.data.code;
-        if (stat) {
-          Swal.fire("Created!", "Skill has been created.", "success").then((result) => {
-            if (result.isConfirmed) {
-
-              this.disabled = false
-              //refresh the page 
-              location.reload();
-            }
-          })
-        } 
-
-        })
-        .catch(error => {
-        // process error object
-        this.disabled = false
-        console.log(error.response.status)
-
-        if(error.response.status){
+      //check if fields are not empty 
+      if(this.skillName.length == 0 || this.skillDesc.length == 0 ){
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Skill already Exists!",
+          text: "All fields must be filled up!",
         });
+
+        this.disabled = false
       }
       else{
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Oops Something Went Wrong!",
-        });
+        axios.post(url, {
+          skill_name : this.skillName,
+          skill_desc : this.skillDesc
+          })
+          .then(response => {
+          // process response.data
+          console.log("create response:" + response.data.code)
+          stat = response.data.code;
+          if (stat) {
+            Swal.fire("Created!", "Skill has been created.", "success").then((result) => {
+              if (result.isConfirmed) {
+  
+                this.disabled = false
+                //refresh the page 
+                location.reload();
+              }
+            })
+          } 
+  
+          })
+          .catch(error => {
+          // process error object
+          this.disabled = false
+          console.log(error.response.status)
+  
+          if(error.response.status){
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Skill already Exists!",
+          });
+        }
+        else{
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Oops Something Went Wrong!",
+          });
+        }
+          
+          });
+
       }
-        
-        });
+
+      
     }
   },
   created() {

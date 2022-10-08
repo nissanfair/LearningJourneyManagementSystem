@@ -4,7 +4,7 @@ const app1 = Vue.createApp({
         // name:value pairs here
         // cannot use variables in another variable as you are declaring here
         message: "Choose your favorite fruit:", // generic
-        skills : "",// Placeholder for now it is to hold all the skills coming from the back end
+        jobroles : "",// Placeholder for now it is to hold all the skills coming from the back end
       }
     },
     methods: {

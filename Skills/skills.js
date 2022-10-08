@@ -108,7 +108,8 @@ const app1 = Vue.createApp({
           // process error object
           this.disabled = false
           console.log(error.response.status)
-  
+          
+          //When skill already exists
           if(error.response.status){
           Swal.fire({
             icon: "error",
@@ -141,6 +142,7 @@ const app1 = Vue.createApp({
         if(response.data.code == 200){
           this.skills = response.data.data.skills;
         }
+        //When all skills are softdeleted 
         else{
           this.message = "<p>There are no skills currently available</p>"
         }
@@ -148,6 +150,11 @@ const app1 = Vue.createApp({
       })
       .catch((error) => {
         // process error object
+        console.log(error.response.status)
+        //When skills database is empty 
+        if(error.response.status == 404){
+          this.message ="<p> There is currently no skills created </p>"
+        }
       });
   },
 });

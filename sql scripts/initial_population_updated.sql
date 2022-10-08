@@ -49,6 +49,8 @@ CREATE TABLE `registration` (
 CREATE TABLE `jobrole` (
 `jobrole_id` int NOT NULL AUTO_INCREMENT,
 `jobrole_name` varchar(255) NOT NULL,
+`jobrole_desc` varchar(255) NOT NULL,
+`isDeleted` boolean DEFAULT false,
 PRIMARY KEY (`jobrole_id`),
 KEY `jobrole_name` (`jobrole_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -108,8 +110,8 @@ INSERT INTO `Course` (`Course_ID`, `Course_Name`, `Course_Desc`, `Course_Status`
 INSERT INTO `Registration` (`Reg_ID`, `Course_ID`, `Staff_ID`, `Reg_Status`, `Completion_Status`) VALUES
 (1, 'IS111', 1, 'Registered', 'Completed');
 
-INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`) VALUES
-(1, 'Data Analyst');
+INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
+(1, 'Data Analyst', 'Analyses Data');
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
 (1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');

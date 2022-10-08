@@ -28,18 +28,24 @@ class JobRole(db.Model):
     __tablename__ = 'jobrole'
     jobrole_id = db.Column(db.Integer, primary_key=True)
     jobrole_name = db.Column(db.String(255), nullable=False)
+    jobrole_desc = db.Column(db.String(255), nullable=False)
     roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
+    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, jobrole_id, jobrole_name, roleskills = []):
+    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False):
         self.jobrole_id = jobrole_id
         self.jobrole_name = jobrole_name
+        self.jobrole_desc = jobrole_desc
         self.roleskills = roleskills
+        self.isDeleted = isDeleted
 
     def json(self):
         return {
                 "jobrole_id": self.jobrole_id,
                 "jobrole_name": self.jobrole_name,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills]
+                "jobrole_desc": self.jobrole_desc,
+                "roleskills": [roleskill.json() for roleskill in self.roleskills],
+                "isDeleted": self.isDeleted
             }
 
 class Skill(db.Model):
@@ -605,6 +611,81 @@ def getjobrolebyid(jobrole_id):
             "message": "JobRole not found."
         }
     ), 404
+
+@app.route('/jobrole/<int:jobrole_id>/softdelete')
+def soft_delete_jobrole(jobrole_id):
+    jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
+    if jobrole:
+        if not jobrole.isDeleted:
+            jobrole.isDeleted = True
+        else:
+            jobrole.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": jobrole.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "JobRole not found."
+        }
+    ), 404
+
+@app.route('/jobrole/softdeleted')
+def getsoftdeletedjobroles():
+    jobroles = JobRole.query.filter_by(isDeleted=True).all()
+
+    if len(jobroles):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "jobroles": [jobrole.json() for jobrole in jobroles]
+                }
+            }
+        )
+
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no soft deleted jobroles."
+        }
+    ), 404
+
+#add job role
+@app.route('/jobrole', methods=['POST'])
+def add_jobrole():
+    data = request.get_json()
+    jobrole = JobRole(**data, jobrole_id = JobRole.query.count() + 1)
+    #check if jobrole already exists
+    if JobRole.query.filter_by(jobrole_name=jobrole.jobrole_name).first():
+        return jsonify(
+            {
+                "code": 400,
+                "message": "A jobrole with name '{}' already exists.".format(jobrole.jobrole_name)
+            }
+        ), 400
+    try:
+        db.session.add(jobrole)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred creating the jobrole."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": jobrole.json()
+        }
+    ), 201
 
 @app.route('/course')
 def course():

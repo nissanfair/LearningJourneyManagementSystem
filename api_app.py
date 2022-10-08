@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy import func
 
 
 
@@ -27,39 +28,51 @@ class JobRole(db.Model):
     __tablename__ = 'jobrole'
     jobrole_id = db.Column(db.Integer, primary_key=True)
     jobrole_name = db.Column(db.String(255), nullable=False)
+    jobrole_desc = db.Column(db.String(255), nullable=False)
     roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
+    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, jobrole_id, jobrole_name, roleskills = []):
+    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False):
         self.jobrole_id = jobrole_id
         self.jobrole_name = jobrole_name
+        self.jobrole_desc = jobrole_desc
         self.roleskills = roleskills
+        self.isDeleted = isDeleted
 
     def json(self):
         return {
                 "jobrole_id": self.jobrole_id,
                 "jobrole_name": self.jobrole_name,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills]
+                "jobrole_desc": self.jobrole_desc,
+                "roleskills": [roleskill.json() for roleskill in self.roleskills],
+                "isDeleted": self.isDeleted
             }
 
 class Skill(db.Model):
     __tablename__ = 'skill'
     skill_id = db.Column(db.Integer, primary_key=True)
     skill_name = db.Column(db.String(255), nullable=False)
+    skill_desc = db.Column(db.String(255))
     roleskills = db.relationship('RoleSkill', backref='skill', lazy=True)
     courseskills = db.relationship('CourseSkill', backref='skill', lazy=True)
+    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, skill_id, skill_name, roleskills = [], courseskills = []):
+    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = [], isDeleted = False):
         self.skill_id = skill_id
         self.skill_name = skill_name
+        self.skill_desc = skill_desc
         self.roleskills = roleskills
         self.courseskills = courseskills
+        self.isDeleted = isDeleted
 
     def json(self):
         return {
                 "skill_id": self.skill_id,
                 "skill_name": self.skill_name,
+                "skill_desc": self.skill_desc,
                 "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "courseskills": [courseskill.json() for courseskill in self.courseskills]
+                "courseskills": [courseskill.json() for courseskill in self.courseskills],
+                "isDeleted": self.isDeleted
             }
 
 class RoleSkill(db.Model):
@@ -85,17 +98,20 @@ class Role(db.Model):
 
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(20), nullable=False)
+    role_desc = db.Column(db.String(128), nullable = True)
     staffs = db.relationship('Staff', backref='Role', lazy=True)
 
-    def __init__(self,role_id,role_name,staffs = list()):
+    def __init__(self,role_id,role_name,role_desc,staffs = list()):
         self.role_id = role_id
         self.role_name = role_name
+        self.role_desc = role_desc
         self.staffs = staffs
 
     def json(self):
         return {
             "role_id": self.role_id,
-            "role_name": self.role_name
+            "role_name": self.role_name,
+            "role_desc": self.role_desc
         }
 
 
@@ -206,7 +222,7 @@ class Registration(db.Model):
 # db.create_all()
 
 def add_values(): #THIS IS EXAMPLE TO ADD VALUES TO DB (CURRENTLY NOT USED AS WE PRIORITISE READ OVER OTHER OPERATIONS)
-    role1 = Role(role_id = 1, role_name = 'Admin', staffs=[])
+    role1 = Role(role_id = 1, role_name = 'Admin', role_desc = 'Responsible for administrative matters' ,staffs=[])
 
 
     staff1 = Staff(staff_id = 1,
@@ -254,18 +270,60 @@ def home():
 def skill():
     skills = Skill.query.all()
     if len(skills):
+
+        skills_not_softdeleted = [skill.json() for skill in skills if not skill.isDeleted]
+
+        if len(skills_not_softdeleted):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "skills": skills_not_softdeleted
+                    }
+                }
+            )
+        
         return jsonify(
             {
-                "code": 200,
-                "data": {
-                    "skills": [skill.json() for skill in skills]
-                }
+                "code": 404,
+                "message": "No skills found that are non softdeleted."
             }
         )
+
     return jsonify(
         {
             "code": 404,
             "message": "There are no skills."
+        }
+    ), 404
+
+@app.route('/skill/softdeleted')
+def skill_softdeleted():
+    skills = Skill.query.all()
+    if len(skills):
+        softdeleted_skills = [skill.json() for skill in skills if skill.isDeleted]
+
+        if len(softdeleted_skills):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "skills": softdeleted_skills
+                    }
+                }
+            )
+
+        return jsonify(
+            {
+                "code": 404,
+                "message": "No skills found that are softdeleted."
+            }
+        )
+        
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no skills in the database."
         }
     ), 404
 
@@ -290,7 +348,15 @@ def find_skill(skill_id):
 @app.route('/skill', methods=['POST'])
 def add_skill():
     data = request.get_json()
-    skill = Skill(**data)
+    skill = Skill(**data, skill_id = Skill.query.count() + 1)
+    skill_name = data['skill_name'].lower()
+    if (Skill.query.filter(func.lower(Skill.skill_name)== skill_name).first()):
+        return jsonify(
+            {
+                "code": 400,
+                "message": "skill already exists."
+            }
+        ), 400
     try:
         db.session.add(skill)
         db.session.commit()
@@ -312,11 +378,43 @@ def add_skill():
         }
     ), 201
 
+#soft delete skill
+@app.route('/skill/<int:skill_id>/softdelete')
+def soft_delete_skill(skill_id):
+    skill = Skill.query.filter_by(skill_id=skill_id).first()
+    if skill:
+        if not skill.isDeleted:
+            skill.isDeleted = True
+        else:
+            skill.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Skill not found."
+        }
+    ), 404
+
 #add role
 @app.route('/role', methods=['POST'])
 def add_role():
     data = request.get_json()
     role = Role(**data)
+    role_name = data['role_name'].lower()
+    if (Role.query.filter(func.lower(Role.role_name)== role_name).first()):
+        return jsonify(
+            {
+                "code": 400,
+                "message": "role already exists."
+            }
+        ), 400
     try:
         db.session.add(role)
         db.session.commit()
@@ -450,9 +548,34 @@ def find_role(role_id):
         }
     ), 404
 
+#soft delete role
+@app.route('/role/<int:role_id>/softdelete')
+def soft_delete_role(role_id):
+    role = Role.query.filter_by(role_id=role_id).first()
+    if role:
+        if not role.isDeleted:
+            role.isDeleted = True
+        else:
+            role.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": role.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "role not found."
+        }
+    ), 404
+
 @app.route('/jobrole')
 def getjobrole():
-    jobroles = JobRole.query.all()
+    #get all non soft deleted job roles
+    jobroles = JobRole.query.filter_by(isDeleted=False).all()
 
     if len(jobroles):
         return jsonify(
@@ -489,6 +612,81 @@ def getjobrolebyid(jobrole_id):
             "message": "JobRole not found."
         }
     ), 404
+
+@app.route('/jobrole/<int:jobrole_id>/softdelete')
+def soft_delete_jobrole(jobrole_id):
+    jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
+    if jobrole:
+        if not jobrole.isDeleted:
+            jobrole.isDeleted = True
+        else:
+            jobrole.isDeleted = False
+            
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": jobrole.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "JobRole not found."
+        }
+    ), 404
+
+@app.route('/jobrole/softdeleted')
+def getsoftdeletedjobroles():
+    jobroles = JobRole.query.filter_by(isDeleted=True).all()
+
+    if len(jobroles):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "jobroles": [jobrole.json() for jobrole in jobroles]
+                }
+            }
+        )
+
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no soft deleted jobroles."
+        }
+    ), 404
+
+#add job role
+@app.route('/jobrole', methods=['POST'])
+def add_jobrole():
+    data = request.get_json()
+    jobrole = JobRole(**data, jobrole_id = JobRole.query.count() + 1)
+    #check if jobrole already exists
+    if JobRole.query.filter_by(jobrole_name=jobrole.jobrole_name).first():
+        return jsonify(
+            {
+                "code": 400,
+                "message": "A jobrole with name '{}' already exists.".format(jobrole.jobrole_name)
+            }
+        ), 400
+    try:
+        db.session.add(jobrole)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred creating the jobrole."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": jobrole.json()
+        }
+    ), 201
 
 @app.route('/course')
 def course():

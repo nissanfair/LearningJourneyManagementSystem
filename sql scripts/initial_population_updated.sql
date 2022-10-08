@@ -7,6 +7,7 @@ USE `ljms`;
 CREATE TABLE `role` (
   `role_id` int NOT NULL AUTO_INCREMENT,
   `role_name` varchar(20) NOT NULL,
+  `role_desc` varchar(128) NOT NULL,
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
@@ -48,6 +49,8 @@ CREATE TABLE `registration` (
 CREATE TABLE `jobrole` (
 `jobrole_id` int NOT NULL AUTO_INCREMENT,
 `jobrole_name` varchar(255) NOT NULL,
+`jobrole_desc` varchar(255) NOT NULL,
+`isDeleted` boolean DEFAULT false,
 PRIMARY KEY (`jobrole_id`),
 KEY `jobrole_name` (`jobrole_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -55,6 +58,8 @@ KEY `jobrole_name` (`jobrole_name`)
 CREATE TABLE `skill` (
 `skill_id` int NOT NULL auto_increment,
 `skill_name` varchar(255) NOT NULL,
+`skill_desc` varchar(255) DEFAULT NULL,
+`isDeleted` boolean DEFAULT false,
 PRIMARY KEY (`skill_id`),
 KEY `skill_name` (`skill_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -93,8 +98,8 @@ CONSTRAINT `learningjourneycourse_ibfk` FOREIGN KEY (`lj_id`) REFERENCES `learni
 CONSTRAINT `learningjourneycourse_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `Role` (`Role_ID`, `Role_Name`) VALUES
-(1, 'Admin');
+INSERT INTO `Role` (`role_id`, `role_name`,`role_desc`) VALUES
+(1, 'Admin', 'Responsible for administrative matters');
 
 INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Email`, `Role`) VALUES
 (1, 'Apple', 'Tan', 'HR', 'apple.tan.hr@spm.com', 1);
@@ -105,11 +110,11 @@ INSERT INTO `Course` (`Course_ID`, `Course_Name`, `Course_Desc`, `Course_Status`
 INSERT INTO `Registration` (`Reg_ID`, `Course_ID`, `Staff_ID`, `Reg_Status`, `Completion_Status`) VALUES
 (1, 'IS111', 1, 'Registered', 'Completed');
 
-INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`) VALUES
-(1, 'Data Analyst');
+INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
+(1, 'Data Analyst', 'Analyses Data');
 
-INSERT INTO `skill` (`skill_id`, `skill_name`) VALUES
-(1, 'Data structures');
+INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
+(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`) VALUES
 (1, 'LJ to be swe');

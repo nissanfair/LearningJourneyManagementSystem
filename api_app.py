@@ -574,7 +574,8 @@ def soft_delete_role(role_id):
 
 @app.route('/jobrole')
 def getjobrole():
-    jobroles = JobRole.query.all()
+    #get all non soft deleted job roles
+    jobroles = JobRole.query.filter_by(isDeleted=False).all()
 
     if len(jobroles):
         return jsonify(

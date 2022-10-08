@@ -14,6 +14,18 @@ const app1 = Vue.createApp({
     del(id) {
       console.log(id); //check that we got the correct id
 
+      // Soft delete without confirmation, comment it out when fixed sweet alerts.
+      url = "http://localhost:5000/jobrole/" + id + "/softdelete";
+      axios
+        .get(url)
+        .then((response) => {
+          // process response.data object
+          alert("Soft deleted! please refresh page to view changes.")
+          console.log(response.data.code);
+          stat = response.data.code;
+          
+        })
+
       //Confirmation prompt for deletion
       Swal.fire({
         title: "Are you sure?",
@@ -66,8 +78,10 @@ const app1 = Vue.createApp({
         })
         .then(response => {
         // process response.data
+        alert("Job Role Created! please refresh to view changes.");
         console.log(response.status)
         console.log(data)
+        
         })
         .catch(error => {
         // process error object

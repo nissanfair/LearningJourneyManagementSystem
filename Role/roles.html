@@ -14,7 +14,7 @@
 </head>
 <body>
     <div class="container-fluid bg-dark mx-0">
-        <header class="p-2 text-bg-dark">
+        <header class="p-3 text-bg-dark">
             <div class="container">
               <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
@@ -22,16 +22,11 @@
                 </a>
         
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                  <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                  <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-                  <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-                  <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-                  <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+                  <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
+                  <li><a href="#" class="nav-link px-2 text-secondary">Roles</a></li>
+                  <li><a href="#" class="nav-link px-2 text-white">Skills</a></li>
+                  <li><a href="#" class="nav-link px-2 text-white">Courses</a></li>
                 </ul>
-        
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                  <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
-                </form>
     
               </div>
             </div>
@@ -40,12 +35,21 @@
 
     <main id="app">
     <div class="container-fluid">
-        <div class="mb-4 jumbotron text-center py-5 bg-light">
-            <h1 class="display-5 fw-bold">Roles</h1>
-            <p class="fs-4">Find the job roles that you want to gain a deeper knowledge in.</p>
+        
+        <div class="jumbotron text-center">
+          <section class="py-5 text-center container">
+            <div class="row py-lg-5">
+              <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">Roles</h1>
+                <p class="lead text-muted">Welcome back HR, Here are the current roles in the system!</p>
+                <p>
+                  <a class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#staticCreateBackdrop">Create</a>
+                </p>
+              </div>
+            </div>
+          </section>
 
-            <!-- modal  -->
-            <a class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#staticCreateBackdrop">Create</a>
+          <!-- modal -->
 
             <div class="modal fade" id="staticCreateBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog">

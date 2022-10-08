@@ -4,10 +4,10 @@ const app1 = Vue.createApp({
     return {
       // name:value pairs here
       // cannot use variables in another variable as you are declaring here
-      roleName : "",
-      roleDesc : "",
+      jobrole_name : "",
+      jobrole_desc : "",
       roleImg : "",
-      roles: "", // Placeholder for now it is to hold all the roles coming from the back end
+      jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
     };
   },
   methods: {
@@ -27,7 +27,7 @@ const app1 = Vue.createApp({
 
         if (result.isConfirmed) {
           //use axios to pass the data over
-          url = "http://localhost:5000/role/" + id + "/softdelete";
+          url = "http://localhost:5000/jobrole/" + id + "/softdelete";
           axios
             .get(url)
             .then((response) => {
@@ -35,7 +35,7 @@ const app1 = Vue.createApp({
               console.log(response.data.code);
               stat = response.data.code;
               if (stat) {
-                Swal.fire("Deleted!", "Role has been deleted.", "success");
+                Swal.fire("Deleted!", "JobRole has been deleted.", "success");
               } 
               else {
                 Swal.fire({
@@ -57,12 +57,12 @@ const app1 = Vue.createApp({
       });
     },
     create(){
-      console.log(this.roleName)
-      console.log(this.roleDesc)
-      url="http://localhost:5000/role"
+      console.log(this.jobrole_name)
+      console.log(this.jobrole_desc)
+      url="http://localhost:5000/jobrole"
       axios.post(url, {
-        roleName : this.roleName,
-        roleDesc : this.roleDesc
+        jobrole_name : this.jobrole_name,
+        jobrole_desc : this.jobrole_desc
         })
         .then(response => {
         // process response.data
@@ -76,13 +76,13 @@ const app1 = Vue.createApp({
     }
   },
   created() {
-    url = "http://localhost:5000/role";
+    url = "http://localhost:5000/jobrole";
     axios
       .get(url)
       .then((response) => {
         // process response.data object
-        console.log(response.data.data.roles);
-        this.roles = response.data.data.roles;
+        console.log(response.data.data.jobroles);
+        this.jobroles = response.data.data.jobroles;
       })
       .catch((error) => {
         // process error object

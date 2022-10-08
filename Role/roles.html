@@ -58,11 +58,11 @@
             
                     <div class="mb-3">
                       <label for="exampleFormControlInput1" class="form-label">Role Name</label>
-                      <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Type your role name" v-model="roleName">
+                      <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Type your role name" v-model="jobrole_name">
                     </div>
                     <div class="mb-3">
                       <label for="exampleFormControlTextarea1" class="form-label">Role Description</label>
-                      <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="roleDesc"></textarea>
+                      <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="jobrole_desc"></textarea>
                     </div>
                   </div>
             
@@ -82,17 +82,18 @@
             <div class="container">
         
               <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <div class="col" v-if="roles.length > 0" v-for="role in roles">
+                <div class="col" v-if="jobroles.length > 0" v-for="jobrole in jobroles">
                   <div class="card shadow-sm h-100">
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>{{role.roleName}}</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>{{jobrole.jobrole_name}}</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
         
                     <div class="card-body">
                     <!-- <h5 class="card-title"></h5> -->
-                    <p class="card-text">{{role.roleDesc}}</p>
+                    <h1 class="card-text">{{jobrole.jobrole_name}}</h1>
+                    <p class="card-text">{{jobrole.jobrole_desc}}</p>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                           <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                          <button type="button" class="btn btn-sm btn-outline-secondary" @click="del(role.role_id)">Delete</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" @click="del(jobrole.jobrole_id)">Delete</button>
                         </div>
                         <small class="text-muted">9 mins</small>
                       </div>

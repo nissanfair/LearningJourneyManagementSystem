@@ -72,7 +72,15 @@ const app1 = Vue.createApp({
       console.log(this.jobrole_name)
       console.log(this.jobrole_desc)
       url="http://localhost:5000/jobrole"
-      axios.post(url, {
+      if (this.jobrole_name.length == 0 || this.jobrole_desc.length == 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "All fields must be filled up!",
+        });
+
+        this.disabled = false;
+      }else{axios.post(url, {
         jobrole_name : this.jobrole_name,
         jobrole_desc : this.jobrole_desc
         })
@@ -87,6 +95,7 @@ const app1 = Vue.createApp({
         // process error object
         console.log(error)
         });
+      }
     }
   },
   created() {

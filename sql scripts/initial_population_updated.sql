@@ -67,7 +67,9 @@ KEY `skill_name` (`skill_name`)
 CREATE TABLE `learningjourney` (
 `lj_id` int NOT NULL,
 `lj_name` varchar(40) NOT NULL,
+`jobrole_id` int NOT NULL,
 PRIMARY KEY (`lj_id`),
+CONSTRAINT `learningjourney_ibfk_1` FOREIGN KEY (`jobrole_id`) REFERENCES `jobrole` (`jobrole_id`),
 KEY `lj_name` (`lj_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
@@ -116,8 +118,8 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
 (1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
 
-INSERT INTO `learningjourney` (`lj_id`, `lj_name`) VALUES
-(1, 'LJ to be swe');
+INSERT INTO `learningjourney` (`lj_id`, `lj_name`, `jobrole_id`) VALUES
+(1, 'LJ to be swe', '1');
 
 INSERT INTO `roleskill` (`rsid`, `jobrole_id`,`skill_id`) VALUES
 (1, 1, 1);

@@ -96,8 +96,28 @@ const app1 = Vue.createApp({
         console.log(error)
         });
       }
-    }
-  },
+    },
+      edit(){
+      console.log(this.jobrole_name)
+      console.log(this.jobrole_desc)
+      // url = "http://localhost:5000/jobrole/" + id + "/edit";
+      // axios.put(url, {
+      //   jobrole_name : this.jobrole_name,
+      //   jobrole_desc : this.jobrole_desc
+      //   })
+        // .then(response => {
+        // // process response.data
+        // alert("Job Role Created! please refresh to view changes.");
+        // console.log(response.status)
+        // console.log(data)
+        
+        // })
+        // .catch(error => {
+        // // process error object
+        // console.log(error)
+        // });
+      }
+    },
   created() {
     url = "http://localhost:5000/jobrole";
     axios

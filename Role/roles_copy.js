@@ -153,12 +153,12 @@ const app1 = Vue.createApp({
           this.jobroles = response.data.data.jobroles;
         }
         else {
-          this.message = "<p>There are no skills currently available</p>";
+          this.message = "<p>There are no roles currently available</p>";
         }
       })
       .catch((error) => {
         // process error object
-        this.message = "<p>There are no skills currently available</p>";
+        this.message = "<p>There are no roles currently available</p>";
       });
   },
 });

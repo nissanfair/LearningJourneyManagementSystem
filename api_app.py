@@ -824,28 +824,28 @@ def learningjourney():
         }
     ), 404
 
-@app.route('/learningjourney/<int:staff_id>')
-def learningjourneyuser():
-    learningjourneys = LearningJourney.query.all()
+# @app.route('/learningjourney/<int:staff_id>')
+# def learningjourneyuser():
+#     learningjourneys = LearningJourney.query.all()
 
-    staff = staff.query.filter_by(staff_id=learningjourneys['staff_id']).first()
+#     staff = staff.query.filter_by(staff_id=learningjourneys['staff_id']).first()
 
-    if len(learningjourneys):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
-                }
-            }
-        )
+#     if len(learningjourneys):
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
+#                 }
+#             }
+#         )
 
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no learningjourneys."
-        }
-    ), 404
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "There are no learningjourneys."
+#         }
+#     ), 404
 #get learning journey courses table
 @app.route('/learningjourneycourse')
 def learningjourneycourse():

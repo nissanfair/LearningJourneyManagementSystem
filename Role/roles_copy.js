@@ -4,9 +4,9 @@ const app1 = Vue.createApp({
     return {
       // name:value pairs here
       // cannot use variables in another variable as you are declaring here
-      jobrole_name : "",
-      jobrole_desc : "",
-      roleImg : "",
+      jobrole_name: "",
+      jobrole_desc: "",
+      roleImg: "",
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
     };
   },
@@ -15,7 +15,7 @@ const app1 = Vue.createApp({
       console.log(id); //check that we got the correct id
 
       // Soft delete without confirmation, comment it out when fixed sweet alerts.
-      url = "http://localhost:5000/jobrole/" + id + "/softdelete";
+      /*url = "http://localhost:5000/jobrole/" + id + "/softdelete";
       axios
         .get(url)
         .then((response) => {
@@ -24,7 +24,7 @@ const app1 = Vue.createApp({
           console.log(response.data.code);
           stat = response.data.code;
           
-        })
+        })*/
 
       //Confirmation prompt for deletion
       Swal.fire({
@@ -35,8 +35,8 @@ const app1 = Vue.createApp({
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
+        allowOutsideClick: false,
       }).then((result) => {
-
         if (result.isConfirmed) {
           //use axios to pass the data over
           url = "http://localhost:5000/jobrole/" + id + "/softdelete";
@@ -47,9 +47,18 @@ const app1 = Vue.createApp({
               console.log(response.data.code);
               stat = response.data.code;
               if (stat) {
-                Swal.fire("Deleted!", "JobRole has been deleted.", "success");
-              } 
-              else {
+                Swal.fire({
+                  title: "Deleted!",
+                  text: "JobRole has been deleted.",
+                  icon: "success",
+                  allowOutsideClick: false,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    //refresh the current page
+                    location.reload();
+                  }
+                });
+              } else {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
@@ -68,10 +77,10 @@ const app1 = Vue.createApp({
         }
       });
     },
-    create(){
-      console.log(this.jobrole_name)
-      console.log(this.jobrole_desc)
-      url="http://localhost:5000/jobrole"
+    create() {
+      console.log(this.jobrole_name);
+      console.log(this.jobrole_desc);
+      url = "http://localhost:5000/jobrole";
       if (this.jobrole_name.length == 0 || this.jobrole_desc.length == 0) {
         Swal.fire({
           icon: "error",
@@ -80,44 +89,59 @@ const app1 = Vue.createApp({
         });
 
         this.disabled = false;
-      }else{axios.post(url, {
-        jobrole_name : this.jobrole_name,
-        jobrole_desc : this.jobrole_desc
-        })
-        .then(response => {
-        // process response.data
-        alert("Job Role Created! please refresh to view changes.");
-        console.log(response.status)
-        console.log(data)
-        
-        })
-        .catch(error => {
-        // process error object
-        console.log(error)
-        });
+      } else {
+        axios
+          .post(url, {
+            jobrole_name: this.jobrole_name,
+            jobrole_desc: this.jobrole_desc,
+          })
+          .then((response) => {
+            // process response.data
+            Swal.fire({
+              title: "Created!",
+              text: "New Job Role Created.",
+              icon: "success",
+              allowOutsideClick: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                //refresh the current page
+                location.reload();
+              }
+            });
+            console.log(response.status);
+          })
+          .catch((error) => {
+            // process error object
+            console.log(error.response.status);
+            Swal.fire("Error!", "Job Role already exists", "error");
+          });
       }
     },
-      edit(){
-      console.log(this.jobrole_name)
-      console.log(this.jobrole_desc)
+    edit() {
+      console.log(this.jobrole_name);
+      console.log(this.jobrole_desc);
       // url = "http://localhost:5000/jobrole/" + id + "/edit";
       // axios.put(url, {
       //   jobrole_name : this.jobrole_name,
       //   jobrole_desc : this.jobrole_desc
       //   })
-        // .then(response => {
-        // // process response.data
-        // alert("Job Role Created! please refresh to view changes.");
-        // console.log(response.status)
-        // console.log(data)
-        
-        // })
-        // .catch(error => {
-        // // process error object
-        // console.log(error)
-        // });
-      }
+      // .then(response => {
+      // // process response.data
+      // alert("Job Role Created! please refresh to view changes.");
+      // console.log(response.status)
+      // console.log(data)
+
+      // })
+      // .catch(error => {
+      // // process error object
+      // console.log(error)
+      // });
     },
+    cancel() {
+      this.jobrole_desc = "";
+      this.jobrole_name = "";
+    }
+  },
   created() {
     url = "http://localhost:5000/jobrole";
     axios

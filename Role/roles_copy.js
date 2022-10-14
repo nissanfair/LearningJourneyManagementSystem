@@ -149,8 +149,7 @@ const app1 = Vue.createApp({
       .catch((error) => {
         // process error object
         this.message = "<p>There are no roles currently available</p>";
-        }
-      });
+        })
   },
 });
 // (2) Link (mount) Vue instance to DOM

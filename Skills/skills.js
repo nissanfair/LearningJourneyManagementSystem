@@ -149,7 +149,7 @@ const app1 = Vue.createApp({
         console.log(error.response.status);
         //When skills database is empty
         if (error.response.status == 404) {
-          this.message = "<p> There is currently no skills created </p>";
+          this.message = "<p> There is currently no skills available </p>";
         }
       });
   },

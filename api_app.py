@@ -378,6 +378,7 @@ def add_skill():
         }
     ), 201
 
+#update skill
 @app.route("/skill/<int:skill_id>", methods=['PUT'])
 def update_skill(skill_id):
     data = request.get_json()
@@ -386,14 +387,14 @@ def update_skill(skill_id):
     
     if skill:
         if data['skill_name']:
-            Skill.skill_name = data['skill_name']
+            skill.skill_name = data['skill_name']
         if data['skill_desc']:
-            Skill.skill_desc = data['skill_desc']
+            skill.skill_desc = data['skill_desc']
         db.session.commit()
         return jsonify(
             {
                 "code": 200,
-                "data": Skill.json()
+                "data": skill.json()
             }
         )
     return jsonify(

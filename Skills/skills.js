@@ -100,7 +100,7 @@ const app1 = Vue.createApp({
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.disabled = false;
-                  //refresh the page
+                  //refresh the current page
                   location.reload();
                 }
               });

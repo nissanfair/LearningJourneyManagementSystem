@@ -1,4 +1,4 @@
-console.log("roles.js load!");
+console.log("roles_copy.js load!");
 const app1 = Vue.createApp({
   data() {
     return {
@@ -6,6 +6,7 @@ const app1 = Vue.createApp({
       // cannot use variables in another variable as you are declaring here
       jobrole_name: "",
       jobrole_desc: "",
+      disabled: false,
       roleImg: "",
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
     };
@@ -25,7 +26,6 @@ const app1 = Vue.createApp({
           stat = response.data.code;
           
         })*/
-
       //Confirmation prompt for deletion
       Swal.fire({
         title: "Are you sure?",
@@ -35,7 +35,6 @@ const app1 = Vue.createApp({
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!",
-        allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
           //use axios to pass the data over
@@ -44,7 +43,6 @@ const app1 = Vue.createApp({
             .get(url)
             .then((response) => {
               // process response.data object
-              console.log(response.data.code);
               stat = response.data.code;
               if (stat) {
                 Swal.fire({
@@ -77,10 +75,19 @@ const app1 = Vue.createApp({
         }
       });
     },
+    cancel() {
+      this.jobrole_name = "";
+      this.jobrole_desc = "";
+    },
     create() {
+      this.disabled = true;
+
       console.log(this.jobrole_name);
       console.log(this.jobrole_desc);
+
+      //Axios post
       url = "http://localhost:5000/jobrole";
+      //check if fields are not empty
       if (this.jobrole_name.length == 0 || this.jobrole_desc.length == 0) {
         Swal.fire({
           icon: "error",
@@ -97,50 +104,46 @@ const app1 = Vue.createApp({
           })
           .then((response) => {
             // process response.data
-            Swal.fire({
-              title: "Created!",
-              text: "New Job Role Created.",
-              icon: "success",
-              allowOutsideClick: false,
-            }).then((result) => {
-              if (result.isConfirmed) {
-                //refresh the current page
-                location.reload();
-              }
-            });
-            console.log(response.status);
+            console.log("create response:" + response.data.code);
+            stat = response.data.code;
+            if (stat) {
+              Swal.fire({
+                title: "Created!",
+                text: "New Job Role has been created.",
+                icon: "success",
+                allowOutsideClick: false,
+  
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.disabled = false;
+                  //refresh the current page
+                  location.reload();
+                }
+              });
+            }
           })
           .catch((error) => {
             // process error object
+            this.disabled = false;
             console.log(error.response.status);
-            Swal.fire("Error!", "Job Role already exists", "error");
+
+            //When jobrole already exists
+            if (error.response.status) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Jobrole already Exists!",
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Oops Something Went Wrong!",
+              });
+            }
           });
       }
     },
-    edit() {
-      console.log(this.jobrole_name);
-      console.log(this.jobrole_desc);
-      // url = "http://localhost:5000/jobrole/" + id + "/edit";
-      // axios.put(url, {
-      //   jobrole_name : this.jobrole_name,
-      //   jobrole_desc : this.jobrole_desc
-      //   })
-      // .then(response => {
-      // // process response.data
-      // alert("Job Role Created! please refresh to view changes.");
-      // console.log(response.status)
-      // console.log(data)
-
-      // })
-      // .catch(error => {
-      // // process error object
-      // console.log(error)
-      // });
-    },
-    cancel() {
-      this.jobrole_desc = "";
-      this.jobrole_name = "";
-    }
   },
   created() {
     url = "http://localhost:5000/jobrole";
@@ -148,11 +151,22 @@ const app1 = Vue.createApp({
       .get(url)
       .then((response) => {
         // process response.data object
-        console.log(response.data.data.jobroles);
-        this.jobroles = response.data.data.jobroles;
+        console.log(response.data.code);
+        if (response.data.code == 200) {
+          this.jobroles = response.data.data.jobroles;
+        }
+        //When all jobroles are softdeleted
+        else {
+          this.message = "<p>There are no jobroles currently available</p>";
+        }
       })
       .catch((error) => {
         // process error object
+        console.log(error.response.status);
+        //When jobroles database is empty
+        if (error.response.status == 404) {
+          this.message = "<p> There is currently no jobroles created </p>";
+        }
       });
   },
 });

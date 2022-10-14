@@ -6,7 +6,7 @@ const app1 = Vue.createApp({
       // cannot use variables in another variable as you are declaring here
       jobrole_name: "",
       jobrole_desc: "",
-      roleImg: "",
+      message: "",
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
     };
   },
@@ -148,11 +148,17 @@ const app1 = Vue.createApp({
       .get(url)
       .then((response) => {
         // process response.data object
-        console.log(response.data.data.jobroles);
-        this.jobroles = response.data.data.jobroles;
+        console.log(response.data);
+        if (response.data.code == 200) {
+          this.jobroles = response.data.data.jobroles;
+        }
+        else {
+          this.message = "<p>There are no skills currently available</p>";
+        }
       })
       .catch((error) => {
         // process error object
+        this.message = "<p>There are no skills currently available</p>";
       });
   },
 });

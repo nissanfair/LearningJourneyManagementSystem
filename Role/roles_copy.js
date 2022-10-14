@@ -1,4 +1,6 @@
 console.log("roles_copy.js load!");
+var skill_name = "";
+var this_holder = "";
 const app1 = Vue.createApp({
   data() {
     return {
@@ -138,6 +140,37 @@ const app1 = Vue.createApp({
         console.log(response.data.code);
         if (response.data.code == 200) {
           this.jobroles = response.data.data.jobroles;
+          this_holder = this;
+          console.log(this);
+          console.log(this_holder);
+          for (const i = 0; i < this.jobroles.length; i++) {
+            // iterate through roleskills
+            for (const j = 0; j < this.jobroles[i].roleskills.length; j++) {
+              // get skill id
+              skill_id = this.jobroles[i].roleskills[j].skill_id;
+              
+              // get skill name with skill_id using axios get
+              url = "http://localhost:5000/skill/" + skill_id;
+              axios
+                .get(url)
+                .then((response) => {
+                  // process response.data object
+                  console.log(response.data.code);
+                  if (response.data.code == 200) {
+                    skill_name = response.data.data.skill_name;
+                    console.log(skill_name);
+                  }
+                })
+                .finally(() => {
+                  console.log(skill_name);
+                  // add skill_name to roleskills
+                  console.log(this_holder);
+                  this_holder.jobroles[i].roleskills[j].skill_name = skill_name;
+                });
+  
+            }
+            
+            }
         }
         //When all jobroles are softdeleted
         else {

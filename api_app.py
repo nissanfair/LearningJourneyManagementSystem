@@ -8,8 +8,8 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 
-DBpassword = '' #for wamp it is default empty string
-DBport = '3306'
+DBpassword = 'root' #for wamp it is default empty string
+DBport = '8889'
 DBusername = 'root'
 DBhost = 'localhost'
 DBname = 'ljms'

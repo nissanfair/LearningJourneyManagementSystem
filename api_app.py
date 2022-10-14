@@ -8,8 +8,8 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 
-DBpassword = '' #for wamp it is default empty string
-DBport = '3306'
+DBpassword = 'root' #for wamp it is default empty string
+DBport = '8889'
 DBusername = 'root'
 DBhost = 'localhost'
 DBname = 'ljms'
@@ -59,19 +59,22 @@ class LearningJourney(db.Model):
     lj_name = db.Column(db.String(50), nullable=False)
     jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
     ljcourses = db.relationship('LearningJourneyCourse', backref='learningjourney', lazy=True)
+    staff_id = db.Column(db.Integer, nullable=False)
     
-    def __init__(self, lj_id, lj_name, jobrole_id, ljcourses = list()):
+    def __init__(self, lj_id, lj_name, jobrole_id, ljcourses = list(), staff_id=1):
         self.lj_id = lj_id
         self.lj_name = lj_name
         self.jobrole_id = jobrole_id
         self.ljcourses = ljcourses
+        self.staff_id = staff_id
     
     def json(self):
         return {
             "lj_id": self.lj_id,
             "lj_name": self.lj_name,
             "jobrole_id": self.jobrole_id,
-            "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses]
+            "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses],
+            "staff_id": self.staff_id
         }
 
 class Skill(db.Model):
@@ -821,6 +824,28 @@ def learningjourney():
         }
     ), 404
 
+# @app.route('/learningjourney/<int:staff_id>')
+# def learningjourneyuser():
+#     learningjourneys = LearningJourney.query.all()
+
+#     staff = staff.query.filter_by(staff_id=learningjourneys['staff_id']).first()
+
+#     if len(learningjourneys):
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
+#                 }
+#             }
+#         )
+
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "There are no learningjourneys."
+#         }
+#     ), 404
 #get learning journey courses table
 @app.route('/learningjourneycourse')
 def learningjourneycourse():

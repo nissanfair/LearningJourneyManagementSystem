@@ -9,7 +9,7 @@ const app1 = Vue.createApp({
       jobrole_name: "",
       jobrole_desc: "",
       disabled: false,
-      roleImg: "",
+      message: "",
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
     };
   },

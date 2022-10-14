@@ -24,7 +24,6 @@ CORS(app)
 
 
 
-
 class JobRole(db.Model):
     __tablename__ = 'jobrole'
     jobrole_id = db.Column(db.Integer, primary_key=True)
@@ -32,16 +31,13 @@ class JobRole(db.Model):
     jobrole_desc = db.Column(db.String(255), nullable=False)
     roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
     isDeleted = db.Column(db.Boolean, nullable=False, default=False)
-    learningjourneys = db.relationship('LearningJourney', backref='jobrole', lazy=True)
 
-    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False, learningjourneys = []):
+    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False):
         self.jobrole_id = jobrole_id
         self.jobrole_name = jobrole_name
         self.jobrole_desc = jobrole_desc
         self.roleskills = roleskills
         self.isDeleted = isDeleted
-        self.learningjourneys = learningjourneys
-        
 
     def json(self):
         return {
@@ -49,30 +45,8 @@ class JobRole(db.Model):
                 "jobrole_name": self.jobrole_name,
                 "jobrole_desc": self.jobrole_desc,
                 "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "isDeleted": self.isDeleted,
-                "learningjourneys": [learningjourney.json() for learningjourney in self.learningjourneys]
+                "isDeleted": self.isDeleted
             }
-
-class LearningJourney(db.Model):
-    __tablename__ = 'learningjourney'
-    lj_id = db.Column(db.Integer, primary_key=True)
-    lj_name = db.Column(db.String(50), nullable=False)
-    jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
-    ljcourses = db.relationship('LearningJourneyCourse', backref='learningjourney', lazy=True)
-    
-    def __init__(self, lj_id, lj_name, jobrole_id, ljcourses = list()):
-        self.lj_id = lj_id
-        self.lj_name = lj_name
-        self.jobrole_id = jobrole_id
-        self.ljcourses = ljcourses
-    
-    def json(self):
-        return {
-            "lj_id": self.lj_id,
-            "lj_name": self.lj_name,
-            "jobrole_id": self.jobrole_id,
-            "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses]
-        }
 
 class Skill(db.Model):
     __tablename__ = 'skill'
@@ -195,11 +169,10 @@ class Course(db.Model):
     course_status = db.Column(db.String(15))
     course_type = db.Column(db.String(10))
     course_category = db.Column(db.String(50))
-    registrations = db.relationship('Registration', backref='course', lazy=True)
+    registrations = db.relationship('Registration', backref='Course', lazy=True)
     courseskills = db.relationship('CourseSkill', backref='course', lazy=True)
-    ljcourses = db.relationship('LearningJourneyCourse', backref='course', lazy=True)
 
-    def __init__(self,course_id,course_name,course_desc,course_status,course_type,course_category,registrations = list(),courseskills = list(), ljcourses = list()):
+    def __init__(self,course_id,course_name,course_desc,course_status,course_type,course_category,registrations = list(),courseskills = list()):
         self.course_id = course_id
         self.course_name = course_name
         self.course_desc = course_desc
@@ -208,7 +181,6 @@ class Course(db.Model):
         self.course_category = course_category
         self.registrations = registrations
         self.courseskills = courseskills
-        self.ljcourses = ljcourses
 
     def json(self):
         return {
@@ -219,8 +191,7 @@ class Course(db.Model):
             "course_type": self.course_type,
             "course_category": self.course_category,
             "registrations": [registration.json() for registration in self.registrations],
-            "courseskills": [courseskill.json() for courseskill in self.courseskills],
-            "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses]
+            "courseskills": [courseskill.json() for courseskill in self.courseskills]
         }
 
 class Registration(db.Model):
@@ -247,26 +218,6 @@ class Registration(db.Model):
             "course_id": self.course_id,
             "staff_id": self.staff_id
         }
-        
-class LearningJourneyCourse(db.Model):
-    __tablename__ = 'learningjourneycourse'
-    ljc_id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.String(20), db.ForeignKey('course.course_id'), nullable=False)
-    lj_id = db.Column(db.Integer, db.ForeignKey('learningjourney.lj_id'), nullable=False)
-
-    def __init__(self, ljc_id, course_id, lj_id):
-        self.ljc_id = ljc_id
-        self.course_id = course_id
-        self.lj_id = lj_id
-    
-    def json(self):
-        return {
-                "ljc_id": self.ljc_id,
-                "course_id": self.course_id,
-                "lj_id": self.lj_id
-            }
-
-
 
 # db.create_all()
 
@@ -313,9 +264,6 @@ def home():
     <a href='/skill'>get skills</a>
     <a href='/roleskill'>get roleskills</a>
     <a href='/courseskill'>get courseskills</a>
-    <a href='/registration'>get registrations</a>
-    <a href='/learningjourney'>get learningjourneys</a>
-    <a href='/learningjourneycourse'>get learningjourneycourse</a>
     """
 
 @app.route('/skill')
@@ -429,6 +377,34 @@ def add_skill():
             "data": skill.json()
         }
     ), 201
+
+@app.route("/skill/<int:skill_id>", methods=['PUT'])
+def update_skill(skill_id):
+    data = request.get_json()
+    skill = Skill(**data,skill_id=skill_id).query.filter_by(skill_id=skill_id).first()
+    # skill = Skill.
+    
+    if skill:
+        if data['skill_name']:
+            Skill.skill_name = data['skill_name']
+        if data['skill_desc']:
+            Skill.skill_desc = data['skill_desc']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": Skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "skill_id": skill_id
+            },
+            "message": "Skill not found."
+        }
+    ), 404
 
 #soft delete skill
 @app.route('/skill/<int:skill_id>/softdelete')
@@ -799,70 +775,5 @@ def courseskill():
         }
     ), 404
 
-#get learning journey
-@app.route('/learningjourney')
-def learningjourney():
-    learningjourneys = LearningJourney.query.all()
-
-    if len(learningjourneys):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
-                }
-            }
-        )
-
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no learningjourneys."
-        }
-    ), 404
-
-#get learning journey courses table
-@app.route('/learningjourneycourse')
-def learningjourneycourse():
-    learningjourneycourse = LearningJourneyCourse.query.all()
-
-    if len(learningjourneycourse):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "learningjourneycourse": [learningjourneycourse.json() for learningjourneycourse in learningjourneycourse]
-                }
-            }
-        )
-
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no learningjourneycourses."
-        }
-    ), 404
-
-#get registrations
-@app.route('/registration')
-def registration():
-    registrations = Registration.query.all()
-
-    if len(registrations):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "registrations": [registration.json() for registration in registrations]
-                }
-            }
-        )
-
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no registrations."
-        }
-    ), 404
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

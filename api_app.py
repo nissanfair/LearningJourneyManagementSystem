@@ -1,3 +1,4 @@
+import json
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -8,8 +9,8 @@ from sqlalchemy import func
 
 app = Flask(__name__)
 
-DBpassword = 'root' #for wamp it is default empty string
-DBport = '8889'
+DBpassword = '' #for wamp it is default empty string
+DBport = '3306'
 DBusername = 'root'
 DBhost = 'localhost'
 DBname = 'ljms'
@@ -110,7 +111,7 @@ class RoleSkill(db.Model):
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
     jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
 
-    def __init__(self, rsid, skill_id, jobrole_id):
+    def __init__(self, rsid, skill_id, jobrole_id, skill_name):
         self.rsid = rsid
         self.skill_id = skill_id
         self.jobrole_id = jobrole_id
@@ -824,28 +825,50 @@ def learningjourney():
         }
     ), 404
 
-# @app.route('/learningjourney/<int:staff_id>')
-# def learningjourneyuser():
-#     learningjourneys = LearningJourney.query.all()
+@app.route('/staff/learningjourney/<int:staff_id>')
+def learningjourneyuser(staff_id):
 
-#     staff = staff.query.filter_by(staff_id=learningjourneys['staff_id']).first()
+    # learningjourneys = LearningJourney.query.all()
 
-#     if len(learningjourneys):
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": {
-#                     "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
-#                 }
-#             }
-#         )
+    
+    # print(LearningJourney['staff_id'])
+    listoflj = LearningJourney.query.filter_by(staff_id = staff_id)
+    if listoflj:
+        return jsonify(
+            {
+                "code":200,
+                "data":{
+                    "learningjourneys": [learningjourney.json() for learningjourney in listoflj]
+                }
+            }
+        )
+    return jsonify(
+    {
+        "code": 404,
+        "message": "There are no learningjourneys."
+    }
+), 404
+    # print(listoflj)
+    
+    # print("hi")
 
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "message": "There are no learningjourneys."
-#         }
-#     ), 404
+    # if len(learningjourneys):
+    #     return jsonify(
+    #         {
+    #             "code": 200,
+    #             "data": {
+    #                 "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
+    #             }
+    #         }
+    #     )
+
+    # return jsonify(
+    #     {
+    #         "code": 404,
+    #         "message": "There are no learningjourneys."
+    #     }
+    # ), 404
+
 #get learning journey courses table
 @app.route('/learningjourneycourse')
 def learningjourneycourse():

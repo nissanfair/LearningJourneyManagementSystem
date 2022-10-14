@@ -73,6 +73,15 @@ CONSTRAINT `learningjourney_ibfk_1` FOREIGN KEY (`jobrole_id`) REFERENCES `jobro
 KEY `lj_name` (`lj_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `stafflj` (
+`stafflj_id` int NOT NULL auto_increment,
+`lj_id` int NOT NULL,
+`staff_id` int NOT NULL,
+PRIMARY KEY (`stafflj_id`),
+CONSTRAINT `stafflj_ibfk` FOREIGN KEY (`lj_id`) REFERENCES `learningjourney` (`lj_id`),
+CONSTRAINT `stafflj_ibfk_2` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `roleskill` (
 `rsid` int NOT NULL AUTO_INCREMENT,
 `jobrole_id` int NOT NULL,

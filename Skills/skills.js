@@ -1,6 +1,7 @@
 console.log("skills.js load!");
 var course_name = "";
-var this_holder = "";
+var this_holder = ""; //to hold "this" variable in axios, 
+//basically a global variable so that the json object can be accessed outside of the axios function scope
 const app1 = Vue.createApp({
   data() {
     return {

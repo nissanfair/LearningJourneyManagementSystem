@@ -145,9 +145,9 @@ const app1 = Vue.createApp({
           this_holder = this;
           console.log(this);
           console.log(this_holder);
-          for (const i = 0; i < this.jobroles.length; i++) {
+          for (let i = 0; i < this.jobroles.length; i++) {
             // iterate through roleskills
-            for (const j = 0; j < this.jobroles[i].roleskills.length; j++) {
+            for (let j = 0; j < this.jobroles[i].roleskills.length; j++) {
               // get skill id
               skill_id = this.jobroles[i].roleskills[j].skill_id;
               
@@ -160,6 +160,8 @@ const app1 = Vue.createApp({
                   console.log(response.data.code);
                   if (response.data.code == 200) {
                     skill_name = response.data.data.skill_name;
+                    console.log(i);
+                    console.log(j);
                     console.log(skill_name);
                   }
                 })

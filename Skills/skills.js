@@ -142,9 +142,9 @@ const app1 = Vue.createApp({
         if (response.data.code == 200) {
           this.skills = response.data.data.skills;
           this_holder = this;
-          for (const i = 0; i < this.skills.length; i++) {
+          for (let i = 0; i < this.skills.length; i++) {
             // iterate through courseskills
-            for (const j = 0; j < this.skills[i].courseskills.length; j++) {
+            for (let j = 0; j < this.skills[i].courseskills.length; j++) {
               // get course_id
               course_id = this.skills[i].courseskills[j].course_id;
               

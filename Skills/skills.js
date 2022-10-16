@@ -128,6 +128,12 @@ const app1 = Vue.createApp({
           });
       }
     },
+    retrieve(){
+      
+    },
+    update(){
+
+    }
   },
   created() {
     url = "http://localhost:5000/skill";

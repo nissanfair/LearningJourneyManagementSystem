@@ -136,8 +136,42 @@ const app1 = Vue.createApp({
       .then((response) => {
         // process response.data object
         console.log(response.data.code);
+        console.log(response.data.data.skills)
+        console.log(response.data.data.skills[0].courseskills)
         if (response.data.code == 200) {
           this.skills = response.data.data.skills;
+          this_holder = this;
+          console.log(this_holder)
+          for (let i = 0; i < this.skills.length; i++) {
+            // iterate through courseskills
+            for (let j = 0; j < this.skills[i].courseskills.length; j++) {
+              // get course_id
+              course_id = this.skills[i].courseskills[j].course_id;
+              
+              // get course name with course_id using axios get
+              url = "http://localhost:5000/course/" + course_id;
+              axios
+                .get(url)
+                .then((response) => {
+                  // process response.data object
+                  console.log(response.data.code);
+                  if (response.data.code == 200) {
+                    course_name = response.data.data.course_name;
+                    console.log(course_name);
+                  }
+                })
+                .finally(() => {
+                  console.log(course_name);
+                  // add course_name to courseskills
+                  console.log(this_holder);
+                  this_holder.skills[i].courseskills[j].course_name = course_name;
+                  console.log(this_holder.skills[i].courseskills[j])
+                });
+  
+            }
+            
+            }
+
         }
         //When all skills are softdeleted
         else {

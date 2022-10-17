@@ -29,15 +29,13 @@ with open('dbsettings.txt') as dbsettingfile:
 
 app = Flask(__name__)
 
-<<<<<<< Updated upstream
 
-=======
-DBpassword = 'root' #for wamp it is default empty string
-DBport = '8889'
+DBpassword = '' #for wamp it is default empty string
+DBport = '3306'
 DBusername = 'root'
 DBhost = 'localhost'
 DBname = 'ljms'
->>>>>>> Stashed changes
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{DBusername}:{DBpassword}@{DBhost}:{DBport}/{DBname}'
 
@@ -410,11 +408,30 @@ def skill_softdeleted():
 @app.route('/skill/<int:skill_id>')
 def find_skill(skill_id):
     skill = Skill.query.filter_by(skill_id=skill_id).first()
+    linked_courses = []
+    
     if skill:
+        courseskillswithname = []
+        # iterate through courseskills and get the course name
+        for courseskill in skill.courseskills:
+            course = Course.query.filter_by(course_id=courseskill.course_id).first()
+            linked_courses.append(course.json())
+
+            courseskillswithname.append({
+                "csid": courseskill.csid,
+                "skill_id": courseskill.skill_id,
+                "course_id": courseskill.course_id,
+                "course_name": course.course_name
+            })
+
+        skilljson = skill.json()
+        skilljson["courseskills"] = courseskillswithname
+        skilljson["linked_courses"] = linked_courses
+
         return jsonify(
             {
                 "code": 200,
-                "data": skill.json()
+                "data": skilljson,
             }
         )
     return jsonify(
@@ -824,6 +841,137 @@ def courseskill():
         {
             "code": 404,
             "message": "There are no courseskills."
+        }
+    ), 404
+
+# put request to courseskill with only skill_id
+@app.route('/skill/<int:skill_id>/courseskills', methods=['PUT'])
+def update_courseskill_forskill(skill_id):
+
+    try:
+        data = request.get_json()
+        skill = Skill.query.filter_by(skill_id=skill_id).first()
+        courseskill = CourseSkill.query.filter_by(skill_id=skill_id).all()
+
+
+        # delete all courseskills for skill
+        for cs in courseskill:
+            db.session.delete(cs)
+
+        unique_course_id = []
+        # add new courseskills for skill
+        for courseskillobject in data['courseskills']:
+            course_id = courseskillobject['course_id']
+            if course_id not in unique_course_id:
+                unique_course_id.append(course_id)
+            else:
+                continue
+
+            courseskill = CourseSkill(skill_id=skill_id, course_id=course_id, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+            db.session.add(courseskill)
+        
+        
+
+        #return updated courseskills
+        return jsonify(
+            {
+                "code": 200,
+                "data": [courseskill.json() for courseskill in skill.courseskills]
+            }
+        )
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred updating the courseskill."
+            }
+        ), 500
+    
+    
+
+# put request to courseskill
+@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['PUT'])
+def update_courseskill(course_id, skill_id):
+    # get courseskill by course_id and skill_id
+    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
+
+    if courseskill:
+        data = request.get_json()
+        courseskill.skill_id = data['skill_id']
+        courseskill.course_id = data['course_id']
+
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": courseskill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "CourseSkill not found."
+        }
+    ), 404
+
+# post request to courseskill
+@app.route('/courseskill', methods=['POST'])
+def add_courseskill():
+
+
+
+
+
+    data = request.get_json()
+    courseskill = CourseSkill(**data, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+
+    #check if courseskill with same skill and course already exists
+    if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():
+        return jsonify(
+            {
+                "code": 400,
+                "message": "A courseskill with skill_id '{}' and course_id '{}' already exists.".format(courseskill.skill_id, courseskill.course_id)
+            }
+        ), 400
+
+    try:
+        db.session.add(courseskill)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred creating the courseskill." #should not happen because checks in place to prevent duplicate csid
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": courseskill.json()
+        }
+    ), 201
+
+    
+
+# delete request to courseskill
+@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['DELETE'])
+def delete_courseskill(course_id, skill_id):
+    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
+    
+    if courseskill:
+        db.session.delete(courseskill)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": courseskill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "CourseSkill not found."
         }
     ), 404
 

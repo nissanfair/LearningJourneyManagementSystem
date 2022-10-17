@@ -120,7 +120,7 @@
             </ul>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-warning">Edit</button>
+                  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticUpdateBackdrop" @click="retrieve(skill.skill_id)">Edit</button>
                   <button type="button" class="btn btn-sm btn-danger" @click="del(skill.skill_id)">Delete</button>
                 </div>
               </div>
@@ -163,6 +163,58 @@
   </div>
 </div>
 
+<!-- Update Skill Modal -->
+<div class="modal fade" id="staticUpdateBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Update Skill</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancel"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Skill Name</label>
+          <input type="email" class="form-control" id="exampleFormControlInput1" v-model="skillName" placeholder="management">
+        </div>
+
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Skill Description</label>
+          <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" v-model="skillDesc" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="form-select" class="form-label">Course Skills</label>
+
+          <select class="form-select" v-model="selectionInput" aria-label="Default select example">
+            <option v-for="option in courses" v-bind:value="option.course_id+'-'+option.course_name">{{option.course_id + option.course_name}}</option>
+          </select>
+          <br>
+          <button type="button" class="btn btn-outline-danger" @click="add()">Add to selection</button>
+        </div>
+
+        <div class="mb-3">
+          <label for="courseul" class="form-label">Current Selection</label>
+          <ul class="list-group" id="courseul">
+            <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(skill,idx) in courseSkills">
+              {{skill}}
+              <button type="button" class="btn btn-outline-danger" @click="remove(idx)">Delete</button>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      
+      
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" @click="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary btn-primary" v-bind:disabled="disabled" @click="update">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </main>
 

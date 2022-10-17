@@ -12,6 +12,9 @@ const app1 = Vue.createApp({
       disabled: false,
       message: "",
       skills: "", // Placeholder for now it is to hold all the skills coming from the back end
+      courseSkills: [], //this will contain the list of courses mapped to the current skill (aka courses that can help you obtain this skill)
+      courses:[], //this will contain all the courses 
+      selectionInput: "" //this will contain the user selecton input from the course drop down list 
     };
   },
   methods: {
@@ -68,6 +71,7 @@ const app1 = Vue.createApp({
     cancel() {
       this.skillDesc = "";
       this.skillName = "";
+      this.courseSkills = [];
     },
     create() {
       this.disabled = true;
@@ -99,7 +103,6 @@ const app1 = Vue.createApp({
                 text: "Skill has been created.",
                 icon: "success",
                 allowOutsideClick: false,
-                
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.disabled = false;
@@ -131,6 +134,59 @@ const app1 = Vue.createApp({
           });
       }
     },
+
+    retrieve(id) {
+      //We will try to obtain the current skill name , desc & if any course skill mapping exists
+      url = "http://localhost:5000/skill/" + id
+      courseUrl = "http://localhost:5000/course"
+
+      //This is to get the current courseskills mapping
+      axios
+        .get(url)
+        .then((response) => {
+          // process response.data object
+          console.log(response.data.data);
+          this.skillName = response.data.data.skill_name;
+          this.skillDesc = response.data.data.skill_desc;
+
+          //Get all the courseskills mappping into a list
+          let cs = response.data.data.courseskills;
+          for (let index = 0; index < cs.length; index++) {
+            this.courseSkills.push(
+              cs[index].course_id + "-" + cs[index].course_name
+            );
+          }
+        })
+        .catch((error) => {
+          // process error object
+          console.log(error.status);
+        });
+
+      //This is to get the list of courses for our drop down list selection
+      axios
+        .get(courseUrl)
+        .then((response) => {
+          // process response.data object
+          console.log(response.data.data.courses)
+          this.courses = response.data.data.courses
+        })
+        .catch((error) => {
+          // process error object
+          console.log(response.data)
+        });
+    },
+
+    remove(id) {
+      // this is to remove the skills in our this.courseSkills based on the users input
+      this.courseSkills.splice(id, 1);
+    },
+    add(){
+      //this is to add to our current course selection list this.courseSkills
+      this.courseSkills.push(this.selectionInput)
+    },
+    update() {//this will handle the submission of changes to the backend
+
+    },
   },
   created() {
     url = "http://localhost:5000/skill";
@@ -139,15 +195,18 @@ const app1 = Vue.createApp({
       .then((response) => {
         // process response.data object
         console.log(response.data.code);
+        console.log(response.data.data.skills);
+        console.log(response.data.data.skills[0].courseskills);
         if (response.data.code == 200) {
           this.skills = response.data.data.skills;
           this_holder = this;
+          console.log(this_holder);
           for (let i = 0; i < this.skills.length; i++) {
             // iterate through courseskills
             for (let j = 0; j < this.skills[i].courseskills.length; j++) {
               // get course_id
               course_id = this.skills[i].courseskills[j].course_id;
-              
+
               // get course name with course_id using axios get
               url = "http://localhost:5000/course/" + course_id;
               axios
@@ -164,13 +223,12 @@ const app1 = Vue.createApp({
                   console.log(course_name);
                   // add course_name to courseskills
                   console.log(this_holder);
-                  this_holder.skills[i].courseskills[j].course_name = course_name;
-                  console.log(this_holder.skills[i].courseskills[j])
+                  this_holder.skills[i].courseskills[j].course_name =
+                    course_name;
+                  console.log(this_holder.skills[i].courseskills[j]);
                 });
-  
             }
-            
-            }
+          }
         }
         //When all skills are softdeleted
         else {

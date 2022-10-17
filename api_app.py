@@ -800,9 +800,11 @@ def courseskill():
     ), 404
 
 # put request to courseskill
-@app.route('/courseskill/<int:csid>', methods=['PUT'])
-def update_courseskill(csid):
-    courseskill = CourseSkill.query.filter_by(csid=csid).first()
+@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['PUT'])
+def update_courseskill(course_id, skill_id):
+    # get courseskill by course_id and skill_id
+    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
+
     if courseskill:
         data = request.get_json()
         courseskill.skill_id = data['skill_id']
@@ -863,9 +865,10 @@ def add_courseskill():
     
 
 # delete request to courseskill
-@app.route('/courseskill/<int:csid>', methods=['DELETE'])
-def delete_courseskill(csid):
-    courseskill = CourseSkill.query.filter_by(csid=csid).first()
+@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['DELETE'])
+def delete_courseskill(course_id, skill_id):
+    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
+    
     if courseskill:
         db.session.delete(courseskill)
         db.session.commit()

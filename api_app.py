@@ -799,6 +799,30 @@ def courseskill():
         }
     ), 404
 
+# put request to courseskill
+@app.route('/courseskill/<int:csid>', methods=['PUT'])
+def update_courseskill(csid):
+    courseskill = CourseSkill.query.filter_by(csid=csid).first()
+    if courseskill:
+        data = request.get_json()
+        courseskill.skill_id = data['skill_id']
+        courseskill.course_id = data['course_id']
+
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": courseskill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "CourseSkill not found."
+        }
+    ), 404
+
+
 #get learning journey
 @app.route('/learningjourney')
 def learningjourney():

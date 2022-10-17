@@ -29,7 +29,15 @@ with open('dbsettings.txt') as dbsettingfile:
 
 app = Flask(__name__)
 
+<<<<<<< Updated upstream
 
+=======
+DBpassword = 'root' #for wamp it is default empty string
+DBport = '8889'
+DBusername = 'root'
+DBhost = 'localhost'
+DBname = 'ljms'
+>>>>>>> Stashed changes
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{DBusername}:{DBpassword}@{DBhost}:{DBport}/{DBname}'
 

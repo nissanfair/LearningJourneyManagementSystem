@@ -93,7 +93,9 @@
         
                     <div class="card-body">
                     <!-- <h5 class="card-title"></h5> -->
+                    <a v-bind:href="'View_OneRole.html?jobrole_id=' + jobrole.jobrole_id">
                     <h1 class="card-text">{{jobrole.jobrole_name}}</h1>
+                    </a>
                     <p class="card-text">{{jobrole.jobrole_desc}}</p>
                     <h2>Skills required:</h2>
                     <ul>

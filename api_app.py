@@ -696,10 +696,25 @@ def getjobrolebyid(jobrole_id):
     jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
 
     if jobrole:
+        jobrolejson = jobrole.json()
+
+        linked_skills = []
+        
+
+        # iterate through roleskills in jobrole
+        for roleskill in jobrole.roleskills:
+            # get skill name from skill id
+            skill = Skill.query.filter_by(skill_id=roleskill.skill_id).first()
+            # append skill.json to linked_skills
+            linked_skills.append(skill.json())
+
+        jobrolejson['linked_skills'] = linked_skills
+            
+
         return jsonify(
             {
                 "code": 200,
-                "data": jobrole.json()
+                "data": jobrolejson
             }
         )
 

@@ -97,7 +97,7 @@
                     <p class="card-text">{{jobrole.jobrole_desc}}</p>
                     <h2>Skills required:</h2>
                     <ul>
-                      <li v-for="skill in jobrole.roleskills">{{skill.skill_name}}</li>
+                      <li v-for="skill in jobrole.roleskills"><a v-bind:href="'../Skills/View_OneSkill.html?skill_id=' + skill.skill_id">{{skill.skill_name}}</a></li>
                     </ul>
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">

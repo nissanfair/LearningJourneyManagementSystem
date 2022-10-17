@@ -1,3 +1,4 @@
+from enum import unique
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -798,6 +799,51 @@ def courseskill():
             "message": "There are no courseskills."
         }
     ), 404
+
+# put request to courseskill with only skill_id
+@app.route('/skill/<int:skill_id>/courseskills', methods=['PUT'])
+def update_courseskill_forskill(skill_id):
+
+    try:
+        data = request.get_json()
+        skill = Skill.query.filter_by(skill_id=skill_id).first()
+        courseskill = CourseSkill.query.filter_by(skill_id=skill_id).all()
+
+
+        # delete all courseskills for skill
+        for cs in courseskill:
+            db.session.delete(cs)
+
+        unique_course_id = []
+        # add new courseskills for skill
+        for courseskillobject in data['courseskills']:
+            course_id = courseskillobject['course_id']
+            if course_id not in unique_course_id:
+                unique_course_id.append(course_id)
+            else:
+                continue
+
+            courseskill = CourseSkill(skill_id=skill_id, course_id=course_id, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+            db.session.add(courseskill)
+        
+        
+
+        #return updated courseskills
+        return jsonify(
+            {
+                "code": 200,
+                "data": [courseskill.json() for courseskill in skill.courseskills]
+            }
+        )
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred updating the courseskill."
+            }
+        ), 500
+    
+    
 
 # put request to courseskill
 @app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['PUT'])

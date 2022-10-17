@@ -383,11 +383,27 @@ def skill_softdeleted():
 @app.route('/skill/<int:skill_id>')
 def find_skill(skill_id):
     skill = Skill.query.filter_by(skill_id=skill_id).first()
+    
     if skill:
+        courseskillswithname = []
+        # iterate through courseskills and get the course name
+        for courseskill in skill.courseskills:
+            course = Course.query.filter_by(course_id=courseskill.course_id).first()
+
+            courseskillswithname.append({
+                "csid": courseskill.csid,
+                "skill_id": courseskill.skill_id,
+                "course_id": courseskill.course_id,
+                "course_name": course.course_name
+            })
+
+        skilljson = skill.json()
+        skilljson["courseskills"] = courseskillswithname
+
         return jsonify(
             {
                 "code": 200,
-                "data": skill.json()
+                "data": skilljson,
             }
         )
     return jsonify(

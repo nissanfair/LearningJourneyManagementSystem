@@ -162,7 +162,7 @@
   </div>
 </div>
 
-<!-- Create Skill Modal -->
+<!-- Update Skill Modal -->
 <div class="modal fade" id="staticUpdateBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -176,11 +176,26 @@
           <label for="exampleFormControlInput1" class="form-label">Skill Name</label>
           <input type="email" class="form-control" id="exampleFormControlInput1" v-model="skillName" placeholder="management">
         </div>
+
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Skill Description</label>
           <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" v-model="skillDesc" rows="3"></textarea>
         </div>
+
+        <div class="mb-3">
+          <label for="courseul" class="form-label">Course Skills</label>
+          <ul class="list-group" id="courseul">
+            <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(skill,idx) in courseSkills">
+              {{skill}}
+              <button type="button" class="btn btn-outline-danger" @click="remove(idx)">Delete</button>
+            </li>
+          </ul>
+        </div>
+
       </div>
+
+      
+      
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" @click="cancel">Cancel</button>

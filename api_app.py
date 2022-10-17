@@ -1,3 +1,4 @@
+from calendar import c
 from enum import unique
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
@@ -383,12 +384,14 @@ def skill_softdeleted():
 @app.route('/skill/<int:skill_id>')
 def find_skill(skill_id):
     skill = Skill.query.filter_by(skill_id=skill_id).first()
+    linked_courses = []
     
     if skill:
         courseskillswithname = []
         # iterate through courseskills and get the course name
         for courseskill in skill.courseskills:
             course = Course.query.filter_by(course_id=courseskill.course_id).first()
+            linked_courses.append(course.json())
 
             courseskillswithname.append({
                 "csid": courseskill.csid,
@@ -399,6 +402,7 @@ def find_skill(skill_id):
 
         skilljson = skill.json()
         skilljson["courseskills"] = courseskillswithname
+        skilljson["linked_courses"] = linked_courses
 
         return jsonify(
             {

@@ -825,8 +825,13 @@ def update_courseskill(csid):
 # post request to courseskill
 @app.route('/courseskill', methods=['POST'])
 def add_courseskill():
+
+
+
+
+
     data = request.get_json()
-    courseskill = CourseSkill(**data, csid = CourseSkill.query.count() + 1)
+    courseskill = CourseSkill(**data, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
 
     #check if courseskill with same skill and course already exists
     if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():
@@ -844,7 +849,7 @@ def add_courseskill():
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the courseskill."
+                "message": "An error occurred creating the courseskill." #should not happen because checks in place to prevent duplicate csid
             }
         ), 500
 
@@ -854,6 +859,28 @@ def add_courseskill():
             "data": courseskill.json()
         }
     ), 201
+
+    
+
+# delete request to courseskill
+@app.route('/courseskill/<int:csid>', methods=['DELETE'])
+def delete_courseskill(csid):
+    courseskill = CourseSkill.query.filter_by(csid=csid).first()
+    if courseskill:
+        db.session.delete(courseskill)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": courseskill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "CourseSkill not found."
+        }
+    ), 404
 
 #get learning journey
 @app.route('/learningjourney')

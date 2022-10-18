@@ -189,6 +189,9 @@ const app1 = Vue.createApp({
       }
     },
     update() {
+      if(this.courseSkills.length !=0 && this.skillDesc !="" && this.skillName !=""){
+      //disable the update button so that they dont spam requests
+      this.disabled= true
       //this will handle the submission of changes to the backend
       sUrl = "http://localhost:5000/skill/" + this.cSkillID;
       csUrl = "http://localhost:5000/skill/" + this.cSkillID + "/courseskills";
@@ -215,6 +218,22 @@ const app1 = Vue.createApp({
             .then(function (response) {
               console.log(response);
               console.log(response.status);
+              console.log("update response:" + response.data.code);
+              stat = response.data.code;
+              if (stat) {
+                Swal.fire({
+                  title: "Updated!",
+                  text: "Skill has been updated.",
+                  icon: "success",
+                  allowOutsideClick: false,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.disabled = false;
+                    //refresh the current page
+                    location.reload();
+                  }
+                });
+              }
             })
             .catch(function (error) {
               console.log(error);
@@ -222,7 +241,22 @@ const app1 = Vue.createApp({
         })
         .catch(function (error) {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Oops Something Went Wrong!",
+          });
         });
+      }
+      else{
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please ensure that Skill Name & Description are not empty and Course selection must have at least one skill!",
+        });
+        //renable the update button
+        this.disabled = false
+      }
     },
   },
   created() {

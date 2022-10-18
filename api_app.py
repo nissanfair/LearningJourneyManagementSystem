@@ -848,13 +848,36 @@ def learningjourneyuser(staff_id):
 
     
     # print(LearningJourney['staff_id'])
+
     listoflj = LearningJourney.query.filter_by(staff_id = staff_id)
+    staff = Staff.query.filter_by(staff_id = staff_id).first()
     if listoflj:
+        learningjourneysjson = []
+
+        # iterate through learningjourneys
+        for learningjourneyobject in listoflj:
+            learningjourneysjson.append(learningjourneyobject.json())
+
+            linked_jobrole = JobRole.query.filter_by(jobrole_id = learningjourneyobject.jobrole_id).first().json()
+            linked_courses = []
+
+            learningjourney = LearningJourney.query.filter_by(lj_id = learningjourneyobject.lj_id).first()
+            # iterate through ljcourses
+
+            ljcourses = LearningJourneyCourse.query.filter_by(lj_id = learningjourney.lj_id)
+            for ljcourseobject in ljcourses:
+                course = Course.query.filter_by(course_id = ljcourseobject.course_id).first()
+                linked_courses.append(course.json())
+
+            learningjourneysjson[-1]['linked_jobrole'] = linked_jobrole
+            learningjourneysjson[-1]['linked_courses'] = linked_courses
+                
+
         return jsonify(
             {
                 "code":200,
                 "data":{
-                    "learningjourneys": [learningjourney.json() for learningjourney in listoflj]
+                    "learningjourneys": learningjourneysjson
                 }
             }
         )

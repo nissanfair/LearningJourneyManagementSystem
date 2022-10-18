@@ -42,6 +42,18 @@
             <div class="row py-lg-5">
               <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light">Learning Journey</h1>
+                <h2>Currently viewing staff id: {{current_staff_id}}</h2>
+                <!-- add a single select dropdown to select staff_id-->
+                <p class="lead text-muted">Select a staff member to view their learning journey</p>
+                <p>
+                  <select onchange="{
+                    //redirect to current url with param staff_id
+                    window.location.href = window.location.href.split('?')[0] + '?staff_id=' + this.value;
+                  }" class="form-select" aria-label="Default select example" v-bind:>
+                    <option selected>Select another staff to look at!</option>
+                    <option v-for="staff in staffs" :value="staff.staff_id">{{staff.staff_id}}</option>
+                  </select>
+                </p>
                 <p class="lead text-muted">This is your learning journey!</p>
                 <p>
                   <a class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#staticCreateBackdrop">Add New Learning Journey</a>
@@ -85,7 +97,7 @@
 
         <div class="row mx-3">
           <div class="accordion" id="accordionExample">
-            <div class="accordion-item" v-if="learningjourney.length > 0" v-for="lj in learningjourney">
+            <div class="accordion-item" v-if="learningjourneys.length > 0" v-for="lj in learningjourneys">
               <h2 class="accordion-header" v-bind:id="'heading' + lj_id">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#' + lj_id" aria-expanded="true" v-bind:aria-controls="lj_id">
                   {{lj.lj_name}}
@@ -97,8 +109,14 @@
                     <li>
                       Courses To Take:
                       <ol>
-                        <li v-for="course in course_names">
-                          {{course}}
+                        <li v-for="course in lj.linked_courses">
+                          {{course.course_id}}  {{course.course_name}}
+                          <ul>
+                            <li>Category: {{course.course_category}}</li>
+                            <li>Status: {{course.course_status}}</li>
+                            <li>Type: {{course.course_type}}</li>
+                            <li>Description: {{course.course_desc}}</li>
+                          </ul>
                         </li>
                       </ol>
                     </li>

@@ -1,15 +1,31 @@
 console.log("LJourney.js load!");
-var skill_name = "";
-var this_holder = "";//to hold "this" variable in axios, 
-//basically a global variable so that the json object can be accessed outside of the axios function scope
 
-const app = Vue.createApp({
+var staff_id = 1;
+// get staff_id from url param
+try {
+  const urlParams = new URLSearchParams(window.location.search);
+  staff_id = urlParams.get("staff_id");
+  if (staff_id == null) {
+    window.location.href = window.location.href + "?staff_id=" + 1;
+  }
+} catch (error) {
+  console.log(error);
+}
+
+
+
+
+
+const app1 = Vue.createApp({
   data() {
     return {
       // name:value pairs here
       // cannot use variables in another variable as you are declaring here
       lj_name: "",
       lj_id: "",
+      current_staff_id: "",
+      learningjourneys: "",
+      staffs: "",
       disabled: false,
       staff_id: "",
       jobrole_id: "", // Placeholder for now it is to hold all the roles coming from the back end
@@ -137,33 +153,29 @@ const app = Vue.createApp({
     },
   },
   created() {
-    url = "http://localhost:5000/learningjourney";
+    this.current_staff_id = staff_id;
+    // lets get all the staffs! for the selecting staff_id dropdown :)
+    axios.get("http://localhost:5000/staff").then((response) => {
+      this.staffs = response.data.data.staffs;
+      console.log(this.staffs);
+    });
+
+    url = `http://localhost:5000/staff/learningjourney/${staff_id}`;
+    
+    
     axios
       .get(url)
       .then((response) => {
         // process response.data object
         console.log(response.data);
         if (response.data.code == 200) {
+          this.learningjourneys = response.data.data.learningjourneys;
+          console.log(this.learningjourneys)
           this.lj_name = response.data.data.lj_name;
           this.lj_id = response.data.data.lj_id;
 
-          url2 = "http://localhost:5000/learningjourneycourse/" + lj_id
-          axios.get(url2)
-          
-          .then(r => {
-              // here, i expect to get the JSON "array" of course IDs pertaining to this lj_id
-              result = r.data;
-              for (course in result) {
-                  course_url = "http://localhost:5000/course/" + course.course_id
-                  axios.get(course_url)
-                  .then(res => {
-                    this.course_names.push(res.data.course_name)
-                  })
-              }
-
-          })
-         }
-            })
+        }
+      })
       .catch((error) => {
         // process error object
         console.log(error.response.status);

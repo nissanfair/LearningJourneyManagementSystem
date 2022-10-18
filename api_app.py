@@ -456,6 +456,10 @@ def update_skill(skill_id):
     if skill:
         data = request.get_json()
         skill_name = data['skill_name'].lower()
+
+        skill.skill_name = "temp"
+        db.session.commit()
+
         if (Skill.query.filter(func.lower(Skill.skill_name)== skill_name).first()):
             return jsonify(
                 {

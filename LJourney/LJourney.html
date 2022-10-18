@@ -105,9 +105,14 @@
               </h2>
               <div v-bind:id="lj_id" class="accordion-collapse collapse show" v-bind:aria-labelledby="'heading' + lj_id" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
+                  <h1>Jobrole: {{lj.linked_jobrole.jobrole_name}}</h1>
+                  <h3>Required Skills: </h3>
+                  <ol>
+                    <li v-for="skill in lj.linked_jobrole.linked_skills">{{skill.skill_name}}</li>
+                  </ol>
                   <ul>
                     <li>
-                      Courses To Take:
+                      <h1>Courses in your learning journey:</h1>
                       <ol>
                         <li v-for="course in lj.linked_courses">
                           {{course.course_id}}  {{course.course_name}}

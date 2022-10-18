@@ -858,7 +858,7 @@ def learningjourneyuser(staff_id):
         for learningjourneyobject in listoflj:
             learningjourneysjson.append(learningjourneyobject.json())
 
-            linked_jobrole = JobRole.query.filter_by(jobrole_id = learningjourneyobject.jobrole_id).first().json()
+            linked_jobrole = JobRole.query.filter_by(jobrole_id = learningjourneyobject.jobrole_id).first()
             linked_courses = []
 
             learningjourney = LearningJourney.query.filter_by(lj_id = learningjourneyobject.lj_id).first()
@@ -869,7 +869,14 @@ def learningjourneyuser(staff_id):
                 course = Course.query.filter_by(course_id = ljcourseobject.course_id).first()
                 linked_courses.append(course.json())
 
-            learningjourneysjson[-1]['linked_jobrole'] = linked_jobrole
+            linked_skills = []
+            for roleskillobject in linked_jobrole.roleskills:
+                skill = Skill.query.filter_by(skill_id = roleskillobject.skill_id).first()
+                linked_skills.append(skill.json())
+
+
+            learningjourneysjson[-1]['linked_jobrole'] = linked_jobrole.json()
+            learningjourneysjson[-1]['linked_jobrole']['linked_skills'] = linked_skills
             learningjourneysjson[-1]['linked_courses'] = linked_courses
                 
 

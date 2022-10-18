@@ -190,19 +190,35 @@ const app1 = Vue.createApp({
     },
     update() {
       //this will handle the submission of changes to the backend
-      url = "http://localhost:5000/skill/" + this.cSkillID + "/courseskills";
+      sUrl = "http://localhost:5000/skill/" + this.cSkillID;
+      csUrl = "http://localhost:5000/skill/" + this.cSkillID + "/courseskills";
       let selection = [];
       for (let index = 0; index < this.courseSkills.length; index++) {
-        selection.push({"course_id":this.courseSkills[index].split("-")[0]});
+        selection.push({ course_id: this.courseSkills[index].split("-")[0] });
       }
       console.log(selection);
 
+      //first we will update the skill name & description
       axios
-        .put(url, {
-            courseskills: selection,
+        .put(sUrl, {
+          skill_desc: this.skillDesc,
+          skill_name: this.skillName,
         })
         .then(function (response) {
           console.log(response);
+          console.log(response.status);
+          // Now we will update the courseskills selection
+          axios
+            .put(csUrl, {
+              courseskills: selection,
+            })
+            .then(function (response) {
+              console.log(response);
+              console.log(response.status);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         })
         .catch(function (error) {
           console.log(error);

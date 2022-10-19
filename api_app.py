@@ -6,26 +6,31 @@ from sqlalchemy import func
 
 
 
-# This is so that dbsettings are obtained from dbsettings.txt which is included in .gitignore
-with open('dbsettings.txt') as dbsettingfile:
-    for line in dbsettingfile:
-        line = line.rstrip("\n")
-        column = line.split(":")
+# # This is so that dbsettings are obtained from dbsettings.txt which is included in .gitignore
+# with open('dbsettings.txt') as dbsettingfile:
+#     for line in dbsettingfile:
+#         line = line.rstrip("\n")
+#         column = line.split(":")
 
-        dbvariable = column[0]
-        variable_value = column[1]
+#         dbvariable = column[0]
+#         variable_value = column[1]
 
-        if dbvariable == 'DBpassword':
-            DBpassword = variable_value
-        elif dbvariable == 'DBport':
-            DBport = variable_value
-        elif dbvariable == 'DBusername':
-            DBusername = variable_value
-        elif dbvariable == 'DBhost':
-            DBhost = variable_value
-        elif dbvariable == 'DBname':
-            DBname = variable_value
+#         if dbvariable == 'DBpassword':
+#             DBpassword = variable_value
+#         elif dbvariable == 'DBport':
+#             DBport = variable_value
+#         elif dbvariable == 'DBusername':
+#             DBusername = variable_value
+#         elif dbvariable == 'DBhost':
+#             DBhost = variable_value
+#         elif dbvariable == 'DBname':
+#             DBname = variable_value
 
+DBpassword = '' #for wamp it is default empty string
+DBport = '3306'
+DBusername = 'root'
+DBhost = 'localhost'
+DBname = 'ljms'
 
 app = Flask(__name__)
 

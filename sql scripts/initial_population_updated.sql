@@ -71,6 +71,7 @@ CREATE TABLE `learningjourney` (
 `staff_id` int NOT NULL,
 PRIMARY KEY (`lj_id`),
 CONSTRAINT `learningjourney_ibfk_1` FOREIGN KEY (`jobrole_id`) REFERENCES `jobrole` (`jobrole_id`),
+CONSTRAINT `learningjourney_ibfk_2` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`staff_id`),
 KEY `lj_name` (`lj_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 

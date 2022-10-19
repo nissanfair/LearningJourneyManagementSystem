@@ -80,23 +80,25 @@ class LearningJourney(db.Model):
     lj_id = db.Column(db.Integer, primary_key=True)
     lj_name = db.Column(db.String(50), nullable=False)
     jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
+    staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'), nullable=False)
     ljcourses = db.relationship('LearningJourneyCourse', backref='learningjourney', lazy=True)
-    staff_id = db.Column(db.Integer, nullable=False)
     
-    def __init__(self, lj_id, lj_name, jobrole_id, ljcourses = list(), staff_id=1):
+    
+    def __init__(self, lj_id, lj_name, jobrole_id, staff_id, ljcourses = list()):
         self.lj_id = lj_id
         self.lj_name = lj_name
         self.jobrole_id = jobrole_id
-        self.ljcourses = ljcourses
         self.staff_id = staff_id
+        self.ljcourses = ljcourses
+        
     
     def json(self):
         return {
             "lj_id": self.lj_id,
             "lj_name": self.lj_name,
             "jobrole_id": self.jobrole_id,
+            "staff_id": self.staff_id,
             "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses],
-            "staff_id": self.staff_id
         }
 
 class Skill(db.Model):

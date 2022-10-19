@@ -915,6 +915,40 @@ def learningjourneyuser(staff_id):
     #     }
     # ), 404
 
+# delete learning journey
+@app.route('/learningjourney/<int:lj_id>', methods=['DELETE'])
+def delete_learningjourney(lj_id):
+    learningjourney = LearningJourney.query.filter_by(lj_id=lj_id).first()
+    if learningjourney:
+        try:
+            # iterate through learningjourney.ljcourses
+            for ljcourseobject in learningjourney.ljcourses:
+                db.session.delete(ljcourseobject)
+
+            db.session.delete(learningjourney)
+            db.session.commit()
+        except:
+            return jsonify(
+                {
+                    "code": 500,
+                    "message": "An error occurred deleting the learningjourney."
+                }
+            ), 500
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": learningjourney.json()
+            }
+        )
+
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Learning Journey not found."
+        }
+    ), 404
+
 #get learning journey courses table
 @app.route('/learningjourneycourse')
 def learningjourneycourse():

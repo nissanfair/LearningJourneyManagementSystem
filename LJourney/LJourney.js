@@ -48,16 +48,16 @@ const app1 = Vue.createApp({
       }).then((result) => {
         if (result.isConfirmed) {
           //use axios to pass the data over
-          url = "http://localhost:5000/jobrole/" + id + "/softdelete";
+          url = "http://localhost:5000/learningjourney/" + id;
           axios
-            .get(url)
+            .delete(url)
             .then((response) => {
               // process response.data object
               stat = response.data.code;
               if (stat) {
                 Swal.fire({
                   title: "Deleted!",
-                  text: "JobRole has been deleted.",
+                  text: "Learning Journey has been deleted.",
                   icon: "success",
                   allowOutsideClick: false,
                 }).then((result) => {

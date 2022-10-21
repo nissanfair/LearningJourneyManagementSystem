@@ -13,9 +13,39 @@ const app1 = Vue.createApp({
       disabled: false,
       message: "",
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
+      cJobRoleID: "", //this will contain the current jobrole ID that we are going to update
+      jobroleSkills: [], //this will contain the list of skills mapped to the current jobrole (aka skills that can help you obtain this jobrole)
     };
   },
   methods: {
+    retrieve(id) {
+      this.cJobRoleID = id;
+      //We will try to obtain the current skill name , desc & if any jobrole skill mapping exists
+      jobroleUrl = "http://localhost:5000/jobrole/" + id;
+      
+      //This is to get the current jobroleskills mapping
+      axios
+        .get(jobroleUrl)
+        .then((response) => {
+          // process response.data object
+          console.log(response.data.data);
+          this.jobrole_name = response.data.data.jobrole_name;
+          this.jobrole_desc = response.data.data.jobrole_desc;
+
+          //Get all the jobroleskills mappping into a list
+          let jrs = response.data.data.linked_skills;
+          for (let index = 0; index < jrs.length; index++) {
+            this.jobroleSkills.push(
+              jrs[index].skill_id + "-" + jrs[index].skill_name
+            );
+          }
+          console.log(this.jobroleSkills)
+        })
+        .catch((error) => {
+          // process error object
+          console.log(error.status);
+        });
+    },
     del(id) {
       //Confirmation prompt for deletion
       Swal.fire({

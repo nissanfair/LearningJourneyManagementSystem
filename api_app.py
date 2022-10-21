@@ -1,4 +1,3 @@
-import json
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -475,6 +474,56 @@ def add_skill():
         }
     ), 201
 
+# update skill
+@app.route('/skill/<int:skill_id>', methods=['PUT'])
+def update_skill(skill_id):
+    skill = Skill.query.filter_by(skill_id=skill_id).first()
+    if skill:
+        data = request.get_json()
+        skill_name = data['skill_name'].lower()
+
+        original_name = skill.skill_name
+
+        skill.skill_name = "temp"
+        db.session.commit()
+
+        if (Skill.query.filter(func.lower(Skill.skill_name)== skill_name).first()):
+            skill.skill_name = original_name
+            db.session.commit()
+            return jsonify(
+                {
+                    "code": 400,
+                    "message": "skill already exists."
+                }
+            ), 400
+        try:
+            skill.skill_name = data['skill_name']
+            skill.skill_desc = data['skill_desc']
+            db.session.commit()
+        except:
+            return jsonify(
+                {
+                    "code": 500,
+                    "data": {
+                        "skill_id": skill_id
+                    },
+                    "message": "An error occurred while updating the skill."
+                }
+            ), 500
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": skill.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Skill not found."
+        }
+    ), 404
+
 #soft delete skill
 @app.route('/skill/<int:skill_id>/softdelete')
 def soft_delete_skill(skill_id):
@@ -865,6 +914,7 @@ def update_courseskill_forskill(skill_id):
 
     try:
         data = request.get_json()
+        print(data)
         skill = Skill.query.filter_by(skill_id=skill_id).first()
         courseskill = CourseSkill.query.filter_by(skill_id=skill_id).all()
 
@@ -882,8 +932,17 @@ def update_courseskill_forskill(skill_id):
             else:
                 continue
 
-            courseskill = CourseSkill(skill_id=skill_id, course_id=course_id, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+            csid = 1
+            try:
+                csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1
+            except:
+                pass
+            
+            
+            courseskill = CourseSkill(skill_id=skill_id, course_id=course_id, csid = csid)
             db.session.add(courseskill)
+        
+        db.session.commit()
         
         
 

@@ -957,33 +957,85 @@ def update_courseskill_forskill(skill_id):
                 "message": "An error occurred updating the courseskill."
             }
         ), 500
+
+@app.route('/skill/<int:skill_id>/roleskills', methods=['PUT'])
+def update_roleskill_forskill(skill_id):
+
+    try:
+        data = request.get_json()
+        print(data)
+        skill = Skill.query.filter_by(skill_id=skill_id).first()
+        roleskill = RoleSkill.query.filter_by(skill_id=skill_id).all()
+
+
+        # delete all roleskills for skill
+        for rs in roleskill:
+            db.session.delete(rs)
+
+        unique_jobrole_id = []
+        # add new roleskills for skill
+        for roleskillobject in data['roleskills']:
+            jobrole_id = roleskillobject['jobrole_id']
+            if jobrole_id not in unique_jobrole_id:
+                unique_jobrole_id.append(jobrole_id)
+            else:
+                continue
+
+            rsid = 1
+            try:
+                rsid = RoleSkill.query.filter(RoleSkill.rsid != None).order_by(RoleSkill.rsid).all()[-1].rsid + 1
+            except:
+                pass
+            
+            
+            roleskill = RoleSkill(skill_id=skill_id, jobrole_id=jobrole_id, rsid = rsid)
+            db.session.add(courseskill)
+        
+        db.session.commit()
+        
+        
+
+        #return updated roleskills
+        return jsonify(
+            {
+                "code": 200,
+                "data": [roleskill.json() for roleskill in skill.roleskills]
+            }
+        )
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred updating the roleskill."
+            }
+        ), 500
     
     
 
 # put request to courseskill
-@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['PUT'])
-def update_courseskill(course_id, skill_id):
-    # get courseskill by course_id and skill_id
-    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
+# @app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['PUT'])
+# def update_courseskill(course_id, skill_id):
+#     # get courseskill by course_id and skill_id
+#     courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
 
-    if courseskill:
-        data = request.get_json()
-        courseskill.skill_id = data['skill_id']
-        courseskill.course_id = data['course_id']
+#     if courseskill:
+#         data = request.get_json()
+#         courseskill.skill_id = data['skill_id']
+#         courseskill.course_id = data['course_id']
 
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": courseskill.json()
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "CourseSkill not found."
-        }
-    ), 404
+#         db.session.commit()
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": courseskill.json()
+#             }
+#         )
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "CourseSkill not found."
+#         }
+#     ), 404
 
 # post request to courseskill
 @app.route('/courseskill', methods=['POST'])

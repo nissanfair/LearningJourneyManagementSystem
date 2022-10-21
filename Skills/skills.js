@@ -192,7 +192,7 @@ const app1 = Vue.createApp({
       }
     },
     update() {
-      if(this.courseSkills.length !=0 && this.skillDesc !="" && this.skillName !=""){
+      if(this.skillDesc !="" && this.skillName !=""){
       //disable the update button so that they dont spam requests
       this.disabled= true
       //this will handle the submission of changes to the backend
@@ -257,7 +257,7 @@ const app1 = Vue.createApp({
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Please ensure that Skill Name & Description are not empty and Course selection must have at least one skill!",
+          text: "Please ensure that Skill Name & Description are not empty!",
         });
         //renable the update button
         this.disabled = false

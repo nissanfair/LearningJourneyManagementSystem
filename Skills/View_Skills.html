@@ -187,7 +187,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="form-select" class="form-label">Course Skills</label>
+          <label for="form-select" class="form-label">Courses</label>
 
           <select class="form-select" v-model="selectionInput" aria-label="Default select example">
             <option v-for="option in courses" v-bind:value="option.course_id+'-'+option.course_name">{{option.course_id + option.course_name}}</option>

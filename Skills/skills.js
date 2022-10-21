@@ -244,9 +244,11 @@ const app1 = Vue.createApp({
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Oops Something Went Wrong!",
+            text: "Oops There seems to be a duplication in the Skill Name",
           });
         });
+        //renable the update button
+        this.disabled = false
       }
       else{
         Swal.fire({

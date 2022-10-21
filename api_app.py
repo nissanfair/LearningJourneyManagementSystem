@@ -34,13 +34,6 @@ DBname = 'ljms'
 app = Flask(__name__)
 
 
-DBpassword = '' #for wamp it is default empty string
-DBport = '3306'
-DBusername = 'root'
-DBhost = 'localhost'
-DBname = 'ljms'
-
-
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{DBusername}:{DBpassword}@{DBhost}:{DBport}/{DBname}'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

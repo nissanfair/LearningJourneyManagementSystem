@@ -26,7 +26,7 @@
                   <li><a href="../Role/roles.html" class="nav-link px-2 text-white">Roles</a></li>
                   <li><a href="../Skills/View_Skills.html" class="nav-link px-2 text-white">Skills</a></li>
                   <li><a href="../Courses/Courses.html" class="nav-link px-2 text-white">Courses</a></li>
-                  <li><a href="../LJourney/LJourney.html" class="nav-link px-2 text-secondary">Learning Journey</a></li>
+                  <li><a href="#" class="nav-link px-2 text-secondary">Learning Journey</a></li>
                 </ul>
     
               </div>
@@ -34,14 +34,26 @@
           </header>
     </div>
 
-    <main id="app">
-    <div class="container-fluid">
+    <main>
+    <div class="container-fluid" id="app">
         
         <div class="jumbotron text-center">
           <section class="py-5 text-center container">
             <div class="row py-lg-5">
               <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light">Learning Journey</h1>
+                <h2>Currently viewing staff id: {{current_staff_id}}</h2>
+                <!-- add a single select dropdown to select staff_id-->
+                <p class="lead text-muted">Select a staff member to view their learning journey</p>
+                <p>
+                  <select onchange="{
+                    //redirect to current url with param staff_id
+                    window.location.href = window.location.href.split('?')[0] + '?staff_id=' + this.value;
+                  }" class="form-select" aria-label="Default select example" v-bind:>
+                    <option selected>Select another staff to look at!</option>
+                    <option v-for="staff in staffs" :value="staff.staff_id">{{staff.staff_id}}</option>
+                  </select>
+                </p>
                 <p class="lead text-muted">This is your learning journey!</p>
                 <p>
                   <a class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#staticCreateBackdrop">Add New Learning Journey</a>
@@ -85,41 +97,50 @@
 
         <div class="row mx-3">
           <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                  Become a Cloud Developer
+            <div class="accordion-item" v-if="learningjourneys.length > 0" v-for="lj in learningjourneys">
+              <h2 class="accordion-header" v-bind:id="'heading' + lj_id">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#' + lj_id" aria-expanded="true" v-bind:aria-controls="lj_id">
+                  {{lj.lj_name}}
                 </button>
               </h2>
-              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div v-bind:id="lj_id" class="accordion-collapse collapse show" v-bind:aria-labelledby="'heading' + lj_id" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
+                  <h1>Jobrole: {{lj.linked_jobrole.jobrole_name}}</h1>
+                  <h3>Required Skills: </h3>
+                  <ol>
+                    <li v-for="skill in lj.linked_jobrole.linked_skills">{{skill.skill_name}}</li>
+                  </ol>
                   <ul>
-                    <li>Description: Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti magni, in omnis soluta sunt hic ad numquam suscipit eius temporibus at saepe rerum deserunt reiciendis ullam iusto odit unde corrupti?</li>
                     <li>
-                      Courses To Take:
+                      <h1>Courses in your learning journey:</h1>
                       <ol>
-                        <li>
-                          <del>Data Structures and Algorithms</del> (Completed)
-                        </li>
-                        <li>
-                          Golang: Programming Language
-                        </li>
-                        <li>
-                          Fundamentals of Cloud Computing
+                        <li v-for="course in lj.linked_courses">
+                          {{course.course_id}}  {{course.course_name}}
+                          <ul>
+                            <li>Category: {{course.course_category}}</li>
+                            <li>Status: {{course.course_status}}</li>
+                            <li>Type: {{course.course_type}}</li>
+                            <li>Description: {{course.course_desc}}</li>
+                          </ul>
                         </li>
                       </ol>
                     </li>
-                    <li>
+                    <!-- button to delete learningjourney -->
+                    <button type="button" class="btn btn-danger" @click="del(lj.lj_id)">Delete Learning Journey</button>
+                    <!-- <li>
                       Progress: 33.33%
                       <div class="progress">
                         <div class="progress-bar bg-success" role="progressbar" aria-label="Warning example" style="width: 33.33%" aria-valuenow="33.33" aria-valuemin="0" aria-valuemax="100"></div>
                       </div>                      
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
               </div>
             </div>
-            <div class="accordion-item">
+            <div v-else>
+              <h1>No learning journeys found for this user!</h1>
+            </div>
+            <!-- <div class="accordion-item">
               <h2 class="accordion-header" id="headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                   Accordion Item #2
@@ -142,7 +163,7 @@
                   <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -155,7 +176,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     <script src="../axios/axios.min.js"></script>
-    <script src="./roles_copy.js"></script>
-    <!-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+    <script src="./LJourney.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

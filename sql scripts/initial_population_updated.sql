@@ -125,7 +125,9 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
 (1, 'Data Analyst', 'Analyses Data');
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
-(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
+(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data'),
+(2, 'Introduction to Python', 'Python was designed for readability, and has some similarities to the English language');
+
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`, `jobrole_id`) VALUES
 (1, 'LJ to be swe', '1');

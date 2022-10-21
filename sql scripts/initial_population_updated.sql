@@ -7,7 +7,6 @@ USE `ljms`;
 CREATE TABLE `role` (
   `role_id` int NOT NULL AUTO_INCREMENT,
   `role_name` varchar(20) NOT NULL,
-  `role_desc` varchar(128) NOT NULL,
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
@@ -102,8 +101,8 @@ CONSTRAINT `learningjourneycourse_ibfk` FOREIGN KEY (`lj_id`) REFERENCES `learni
 CONSTRAINT `learningjourneycourse_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `Role` (`role_id`, `role_name`,`role_desc`) VALUES
-(1, 'Admin', 'Responsible for administrative matters');
+INSERT INTO `Role` (`role_id`, `role_name`) VALUES
+(1, 'Admin');
 
 INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Email`, `Role`) VALUES
 (1, 'Apple', 'Tan', 'HR', 'apple.tan.hr@spm.com', 1);

@@ -156,20 +156,17 @@ class Role(db.Model):
 
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(20), nullable=False)
-    role_desc = db.Column(db.String(128), nullable = True)
     staffs = db.relationship('Staff', backref='Role', lazy=True)
 
-    def __init__(self,role_id,role_name,role_desc,staffs = list()):
+    def __init__(self,role_id,role_name,staffs = list()):
         self.role_id = role_id
         self.role_name = role_name
-        self.role_desc = role_desc
         self.staffs = staffs
 
     def json(self):
         return {
             "role_id": self.role_id,
-            "role_name": self.role_name,
-            "role_desc": self.role_desc
+            "role_name": self.role_name
         }
 
 
@@ -303,7 +300,7 @@ class LearningJourneyCourse(db.Model):
 # db.create_all()
 
 def add_values(): #THIS IS EXAMPLE TO ADD VALUES TO DB (CURRENTLY NOT USED AS WE PRIORITISE READ OVER OTHER OPERATIONS)
-    role1 = Role(role_id = 1, role_name = 'Admin', role_desc = 'Responsible for administrative matters' ,staffs=[])
+    role1 = Role(role_id = 1, role_name = 'Admin',staffs=[])
 
 
     staff1 = Staff(staff_id = 1,

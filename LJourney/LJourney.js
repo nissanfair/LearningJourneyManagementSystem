@@ -154,7 +154,7 @@ const app1 = Vue.createApp({
       url = "http://localhost:5000/jobrole"
       axios
         .get(url)
-        .then(function (response) {
+        .then((response) =>{
           // handle success
           console.log(response.data.data.jobroles);
           this.job_roles = response.data.data.jobroles

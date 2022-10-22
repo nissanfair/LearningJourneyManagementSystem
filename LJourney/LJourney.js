@@ -12,10 +12,6 @@ try {
   console.log(error);
 }
 
-
-
-
-
 const app1 = Vue.createApp({
   data() {
     return {
@@ -31,7 +27,8 @@ const app1 = Vue.createApp({
       jobrole_id: "", // Placeholder for now it is to hold all the roles coming from the back end
       ljc_id: "",
       course_id: "",
-      course_names: []
+      course_names: [],
+      job_roles: [], //This will hold the selection of job roles
     };
   },
   methods: {
@@ -89,6 +86,7 @@ const app1 = Vue.createApp({
       this.jobrole_name = "";
       this.jobrole_desc = "";
     },
+
     create() {
       this.disabled = true;
 
@@ -119,7 +117,6 @@ const app1 = Vue.createApp({
                 text: "New Job Role has been created.",
                 icon: "success",
                 allowOutsideClick: false,
-  
               }).then((result) => {
                 if (result.isConfirmed) {
                   this.disabled = false;
@@ -151,6 +148,24 @@ const app1 = Vue.createApp({
           });
       }
     },
+
+    //this is called when we click add learning journey
+    retrieve() {
+      url = "http://localhost:5000/jobrole"
+      axios
+        .get(url)
+        .then(function (response) {
+          // handle success
+          console.log(response.data.data.jobroles);
+          this.job_roles = response.data.data.jobroles
+          console.log(this.job_roles)
+
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        });
+    }
   },
   created() {
     this.current_staff_id = staff_id;
@@ -161,8 +176,7 @@ const app1 = Vue.createApp({
     });
 
     url = `http://localhost:5000/staff/learningjourney/${staff_id}`;
-    
-    
+
     axios
       .get(url)
       .then((response) => {
@@ -170,10 +184,9 @@ const app1 = Vue.createApp({
         console.log(response.data);
         if (response.data.code == 200) {
           this.learningjourneys = response.data.data.learningjourneys;
-          console.log(this.learningjourneys)
+          console.log(this.learningjourneys);
           this.lj_name = response.data.data.lj_name;
           this.lj_id = response.data.data.lj_id;
-
         }
       })
       .catch((error) => {
@@ -181,7 +194,8 @@ const app1 = Vue.createApp({
         console.log(error.response.status);
         //When jobroles database is empty
         if (error.response.status == 404) {
-          this.message = "<p> There is currently no learning journey created </p>";
+          this.message =
+            "<p> There is currently no learning journey created </p>";
         }
       });
   },

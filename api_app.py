@@ -1009,7 +1009,6 @@ def update_courseskill_forskill(skill_id):
 
 @app.route('/jobrole/<int:jobrole_id>/roleskills', methods=['PUT'])
 def update_roleskill_forrole(jobrole_id):
-    print("0")
     try:
         data = request.get_json()
         print(data)
@@ -1040,7 +1039,6 @@ def update_roleskill_forrole(jobrole_id):
             
             roleskill = RoleSkill(skill_id=skill_id, jobrole_id=jobrole_id, rsid = rsid)
             db.session.add(roleskill)
-        print("5")
         db.session.commit()
         
         

@@ -132,7 +132,7 @@ class RoleSkill(db.Model):
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
     jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
 
-    def __init__(self, rsid, skill_id, jobrole_id, skill_name):
+    def __init__(self, rsid, skill_id, jobrole_id):
         self.rsid = rsid
         self.skill_id = skill_id
         self.jobrole_id = jobrole_id
@@ -691,6 +691,55 @@ def find_role(role_id):
         }
     ), 404
 
+@app.route('/jobrole/<int:jobrole_id>', methods=['PUT'])
+def update_jobrole(jobrole_id):
+    jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
+    if jobrole:
+        data = request.get_json()
+        jobrole_name = data['jobrole_name'].lower()
+
+        original_name = jobrole.jobrole_name
+
+        jobrole.jobrole_name = "temp"
+        db.session.commit()
+
+        if (JobRole.query.filter(func.lower(JobRole.jobrole_name)== jobrole_name).first()):
+            jobrole.jobrole_name = original_name
+            db.session.commit()
+            return jsonify(
+                {
+                    "code": 400,
+                    "message": "job role already exists."
+                }
+            ), 400
+        try:
+            jobrole.jobrole_name = data['jobrole_name']
+            jobrole.jobrole_desc = data['jobrole_desc']
+            db.session.commit()
+        except:
+            return jsonify(
+                {
+                    "code": 500,
+                    "data": {
+                        "jobrole_id": jobrole_id
+                    },
+                    "message": "An error occurred while updating the jobrole."
+                }
+            ), 500
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": jobrole.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "role not found."
+        }
+    ), 404
+
 #soft delete role
 @app.route('/role/<int:role_id>/softdelete')
 def soft_delete_role(role_id):
@@ -958,26 +1007,27 @@ def update_courseskill_forskill(skill_id):
             }
         ), 500
 
-@app.route('/skill/<int:skill_id>/roleskills', methods=['PUT'])
-def update_roleskill_forskill(skill_id):
-
+@app.route('/jobrole/<int:jobrole_id>/roleskills', methods=['PUT'])
+def update_roleskill_forrole(jobrole_id):
+    print("0")
     try:
         data = request.get_json()
         print(data)
-        skill = Skill.query.filter_by(skill_id=skill_id).first()
-        roleskill = RoleSkill.query.filter_by(skill_id=skill_id).all()
+        jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
+        roleskill = RoleSkill.query.filter_by(jobrole_id=jobrole_id).all()
 
 
         # delete all roleskills for skill
         for rs in roleskill:
             db.session.delete(rs)
 
+# ----------------------------------WEIRD???----------------------------------------------------------------------------
         unique_jobrole_id = []
         # add new roleskills for skill
         for roleskillobject in data['roleskills']:
-            jobrole_id = roleskillobject['jobrole_id']
-            if jobrole_id not in unique_jobrole_id:
-                unique_jobrole_id.append(jobrole_id)
+            skill_id = roleskillobject['jobrole_id']
+            if skill_id not in unique_jobrole_id:
+                unique_jobrole_id.append(skill_id)
             else:
                 continue
 
@@ -989,8 +1039,8 @@ def update_roleskill_forskill(skill_id):
             
             
             roleskill = RoleSkill(skill_id=skill_id, jobrole_id=jobrole_id, rsid = rsid)
-            db.session.add(courseskill)
-        
+            db.session.add(roleskill)
+        print("5")
         db.session.commit()
         
         
@@ -999,7 +1049,7 @@ def update_roleskill_forskill(skill_id):
         return jsonify(
             {
                 "code": 200,
-                "data": [roleskill.json() for roleskill in skill.roleskills]
+                "data": [roleskill.json() for roleskill in jobrole.roleskills]
             }
         )
     except:

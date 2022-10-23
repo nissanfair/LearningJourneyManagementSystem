@@ -29,6 +29,8 @@ const app1 = Vue.createApp({
       course_id: "",
       course_names: [],
       job_roles: [], //This will hold the selection of job roles
+      jobroleselection: "", // this will hold the job role selection from the dropdown list
+      linked_skills_list: [], //this will hold the skills linked to the selected job role
     };
   },
   methods: {
@@ -151,21 +153,38 @@ const app1 = Vue.createApp({
 
     //this is called when we click add learning journey
     retrieve() {
-      url = "http://localhost:5000/jobrole"
+      url = "http://localhost:5000/jobrole";
       axios
         .get(url)
-        .then((response) =>{
+        .then((response) => {
           // handle success
           console.log(response.data.data.jobroles);
-          this.job_roles = response.data.data.jobroles
-          console.log(this.job_roles)
-
+          this.job_roles = response.data.data.jobroles;
+          console.log(this.job_roles);
         })
         .catch(function (error) {
           // handle error
           console.log(error);
         });
-    }
+    },
+    obtain() {
+      //here we will try and populate the skills needed for the selected job role
+      if (this.jobroleselection != "") {
+        url = "http://localhost:5000/jobrole/" + this.jobroleselection;
+        axios
+          .get(url)
+          .then((response) => {
+            // handle success
+            console.log(response.data.data);
+            console.log(response.data.data.linked_skills);
+            this.linked_skills_list = response.data.data.linked_skills;
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+    },
   },
   created() {
     this.current_staff_id = staff_id;

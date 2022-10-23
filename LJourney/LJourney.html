@@ -159,16 +159,55 @@
             <div class="mb-3">
               <label for="form-select" class="form-label">Select Job Role</label>
 
-              <select class="form-select" aria-label="Default select example">
-                <option>Open this select menu</option>
+              <select class="form-select" v-model="jobroleselection" v-on:change="obtain" aria-label="Default select example">
+                <option value="">Please select</option>
                 <option v-for="role in job_roles" v-bind:value="role.jobrole_id">{{role.jobrole_name}}</option>
               </select>
 
             </div>
+            <div class="mb-3 result" v-if="jobroleselection !='' ">
+              <label for="list-group" class="form-label">Skills Needed</label>
+
+              <div class="list-group">
+                <a href="#" v-for="skill in linked_skills_list" class="list-group-item list-group-item-action">{{skill.skill_name}}</a>
+              </div>
+            </div>
+
+            <div v-else class="mb-3 result">
+              <label for="list-group" class="form-label">Skills Needed</label>
+            </div>
             
             <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Role Description</label>
-              <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              <label for="table" class="form-label">Courses To Take</label>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 

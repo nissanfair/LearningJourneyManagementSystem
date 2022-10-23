@@ -152,7 +152,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="staticBackdropLabel">Create Learning Journey</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancel"></button>
           </div>
           <div class="modal-body">
 
@@ -169,7 +169,7 @@
               <label for="list-group" class="form-label">Skills Needed</label>
 
               <div class="list-group">
-                <a href="#" v-for="skill in linked_skills_list" class="list-group-item list-group-item-action">{{skill.skill_name}}</a>
+                <a href="#" v-for="skill in linked_skills_list" class="list-group-item list-group-item-action" @click="populate(skill.skill_id)">{{skill.skill_name}}</a>
               </div>
             </div>
 
@@ -179,32 +179,23 @@
             
             <div class="mb-3">
               <label for="table" class="form-label">Courses To Take</label>
-              <table class="table">
+              <table class="table" v-if="courses_list.length !=0">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Course ID</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Course Description</th>
+                    <th scope="col">Course Category</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
+                  <tr v-for="(course, index) in courses_list">
+                    <th scope="row">{{index + 1}}</th>
+                    <td>{{course.course_id}}</td>
+                    <td>{{course.course_name}}</td>
+                    <td>{{course.course_desc}}</td>
+                    <td>{{course.course_category}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -212,7 +203,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" @click="cancel">Cancel</button>
             <button type="button" class="btn btn-primary btn-primary" @click="create">Create</button>
           </div>
         </div>

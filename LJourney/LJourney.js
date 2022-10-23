@@ -31,6 +31,7 @@ const app1 = Vue.createApp({
       job_roles: [], //This will hold the selection of job roles
       jobroleselection: "", // this will hold the job role selection from the dropdown list
       linked_skills_list: [], //this will hold the skills linked to the selected job role
+      courses_list: [] //this will hold the courses that can help clear a particular skill
     };
   },
   methods: {
@@ -85,8 +86,9 @@ const app1 = Vue.createApp({
       });
     },
     cancel() {
-      this.jobrole_name = "";
-      this.jobrole_desc = "";
+      this.jobroleselection = "";
+      this.linked_skills_list= [];
+      this.courses_list = []
     },
 
     create() {
@@ -185,6 +187,22 @@ const app1 = Vue.createApp({
           });
       }
     },
+    populate(id){// here we will populate the table to show the courses to clear a particular selected skill
+      url = "http://localhost:5000/skill/" + id
+      axios
+          .get(url)
+          .then((response) => {
+            // handle success
+            console.log(response.data.data);
+            console.log(response.data.data.linked_courses)
+            this.courses_list = response.data.data.linked_courses
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+
+    }
   },
   created() {
     this.current_staff_id = staff_id;

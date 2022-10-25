@@ -1,25 +1,8 @@
-from __main__ import app, db
-from backend_files.jobrole.jobrole_manager import JobRole
+from __main__ import app, db, JobRole, RoleSkill
 from flask import jsonify, request
 
 
-class RoleSkill(db.Model):
-    __tablename__ = 'roleskill'
-    rsid = db.Column(db.Integer, primary_key=True)
-    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
-    jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
 
-    def __init__(self, rsid, skill_id, jobrole_id):
-        self.rsid = rsid
-        self.skill_id = skill_id
-        self.jobrole_id = jobrole_id
-
-    def json(self):
-        return {
-                "rsid": self.rsid,
-                "skill_id": self.skill_id,
-                "jobrole_id": self.jobrole_id
-            }
 
 @app.route('/roleskill')
 def roleskill():

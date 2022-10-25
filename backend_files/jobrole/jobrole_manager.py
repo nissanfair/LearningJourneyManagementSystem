@@ -1,35 +1,9 @@
-from __main__ import app, db
-from backend_files.skill.skill_manager import Skill
+from __main__ import app, db, JobRole, Skill
+
 from flask import jsonify, request
 from sqlalchemy import func
 
-class JobRole(db.Model):
-    __tablename__ = 'jobrole'
-    jobrole_id = db.Column(db.Integer, primary_key=True)
-    jobrole_name = db.Column(db.String(255), nullable=False)
-    jobrole_desc = db.Column(db.String(255), nullable=False)
-    roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
-    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
-    learningjourneys = db.relationship('LearningJourney', backref='jobrole', lazy=True)
 
-    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False, learningjourneys = []):
-        self.jobrole_id = jobrole_id
-        self.jobrole_name = jobrole_name
-        self.jobrole_desc = jobrole_desc
-        self.roleskills = roleskills
-        self.isDeleted = isDeleted
-        self.learningjourneys = learningjourneys
-        
-
-    def json(self):
-        return {
-                "jobrole_id": self.jobrole_id,
-                "jobrole_name": self.jobrole_name,
-                "jobrole_desc": self.jobrole_desc,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "isDeleted": self.isDeleted,
-                "learningjourneys": [learningjourney.json() for learningjourney in self.learningjourneys]
-            }
 
 @app.route('/jobrole/<int:jobrole_id>', methods=['PUT'])
 def update_jobrole(jobrole_id):

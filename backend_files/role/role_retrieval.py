@@ -1,26 +1,10 @@
-from __main__ import app, db
+from __main__ import app, db, Role
 
 
 from flask import jsonify, request
 from sqlalchemy import func
 
-class Role(db.Model):
-    __tablename__ = 'role'
 
-    role_id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(20), nullable=False)
-    staffs = db.relationship('Staff', backref='Role', lazy=True)
-
-    def __init__(self,role_id,role_name,staffs = list()):
-        self.role_id = role_id
-        self.role_name = role_name
-        self.staffs = staffs
-
-    def json(self):
-        return {
-            "role_id": self.role_id,
-            "role_name": self.role_name
-        }
 
 #add role
 @app.route('/role', methods=['POST'])

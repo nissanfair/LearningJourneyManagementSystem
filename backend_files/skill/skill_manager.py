@@ -1,35 +1,10 @@
-from __main__ import app, db
-from backend_files.Course.course_retrieval import Course
+from __main__ import app, db, Course, Skill
+
 
 from flask import jsonify, request
 from sqlalchemy import func
 
-class Skill(db.Model):
-    __tablename__ = 'skill'
-    skill_id = db.Column(db.Integer, primary_key=True)
-    skill_name = db.Column(db.String(255), nullable=False)
-    skill_desc = db.Column(db.String(255))
-    roleskills = db.relationship('RoleSkill', backref='skill', lazy=True)
-    courseskills = db.relationship('CourseSkill', backref='skill', lazy=True)
-    isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = [], isDeleted = False):
-        self.skill_id = skill_id
-        self.skill_name = skill_name
-        self.skill_desc = skill_desc
-        self.roleskills = roleskills
-        self.courseskills = courseskills
-        self.isDeleted = isDeleted
-
-    def json(self):
-        return {
-                "skill_id": self.skill_id,
-                "skill_name": self.skill_name,
-                "skill_desc": self.skill_desc,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "courseskills": [courseskill.json() for courseskill in self.courseskills],
-                "isDeleted": self.isDeleted
-            }
 
 @app.route('/skill')
 def skill():

@@ -1,24 +1,8 @@
-from __main__ import app, db
-from backend_files.skill.skill_manager import Skill
+from __main__ import app, db, Skill, CourseSkill
+
 from flask import jsonify, request
 
-class CourseSkill(db.Model):
-    __tablename__ = 'courseskill'
-    csid = db.Column(db.Integer, primary_key=True)
-    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
-    course_id = db.Column(db.String(20), db.ForeignKey('course.course_id'), nullable=False)
 
-    def __init__(self, csid, skill_id, course_id):
-        self.csid = csid
-        self.skill_id = skill_id
-        self.course_id = course_id
-
-    def json(self):
-        return {
-                "csid": self.csid,
-                "skill_id": self.skill_id,
-                "course_id": self.course_id
-            }
 
 @app.route('/courseskill')
 def courseskill():

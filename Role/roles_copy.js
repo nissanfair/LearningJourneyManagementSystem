@@ -15,6 +15,8 @@ const app1 = Vue.createApp({
       jobroles: "", // Placeholder for now it is to hold all the roles coming from the back end
       cJobRoleID: "", //this will contain the current jobrole ID that we are going to update
       jobroleSkills: [], //this will contain the list of skills mapped to the current jobrole (aka skills that can help you obtain this jobrole)
+      skills: [], //this will contain all the skills
+      selectionInput: "", //this will contain the user selecton input from the course drop down list
     };
   },
   methods: {
@@ -22,6 +24,7 @@ const app1 = Vue.createApp({
       this.cJobRoleID = id;
       //We will try to obtain the current skill name , desc & if any jobrole skill mapping exists
       jobroleUrl = "http://localhost:5000/jobrole/" + id;
+      skillUrl = "http://localhost:5000/skill";
       
       //This is to get the current jobroleskills mapping
       axios
@@ -44,6 +47,17 @@ const app1 = Vue.createApp({
         .catch((error) => {
           // process error object
           console.log(error.status);
+        });
+        axios
+        .get(skillUrl)
+        .then((response) => {
+          // process response.data object
+          console.log(response.data.data.skills);
+          this.skills = response.data.data.skills;
+        })
+        .catch((error) => {
+          // process error object
+          console.log(response.data);
         });
     },
     del(id) {
@@ -99,6 +113,7 @@ const app1 = Vue.createApp({
     cancel() {
       this.jobrole_name = "";
       this.jobrole_desc = "";
+      this.jobroleSkills = [];
     },
     create() {
       this.disabled = true;
@@ -160,6 +175,91 @@ const app1 = Vue.createApp({
               });
             }
           });
+      }
+    },
+    remove(id) {
+      // this is to remove the skills in our this.jobroleSkills based on the users input
+      this.jobroleSkills.splice(id, 1);
+    },
+    add() {
+      //this is to add to our current course selection list this.jobroleSkills
+      if (
+        this.selectionInput != "" &&
+        !this.jobroleSkills.includes(this.selectionInput)
+      ) {
+        this.jobroleSkills.push(this.selectionInput);
+      }
+    },
+    update() {
+      if(this.jobrole_desc !="" && this.jobrole_name !=""){
+      //disable the update button so that they dont spam requests
+      this.disabled= true
+      //this will handle the submission of changes to the backend
+      rUrl = "http://localhost:5000/jobrole/" + this.cJobRoleID;
+      rsUrl = "http://localhost:5000/jobrole/" + this.cJobRoleID + "/roleskills";
+      let selection = [];
+      for (let index = 0; index < this.jobroleSkills.length; index++) {
+        selection.push({ jobrole_id: this.jobroleSkills[index].split("-")[0] });
+      }
+      console.log(selection);
+
+      //first we will update the role name & description
+      axios
+        .put(rUrl, {
+          jobrole_desc: this.jobrole_desc,
+          jobrole_name: this.jobrole_name,
+        })
+        .then(function (response) {
+          console.log(response);
+          console.log(response.status);
+          // Now we will update the roleskills selection
+          axios
+            .put(rsUrl, {
+              roleskills: selection,
+            })
+            .then(function (response) {
+              console.log(response);
+              console.log(response.status);
+              console.log("update response:" + response.data.code);
+              stat = response.data.code;
+              if (stat) {
+                Swal.fire({
+                  title: "Updated!",
+                  text: "Job role has been updated.",
+                  icon: "success",
+                  allowOutsideClick: false,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.disabled = false;
+                    //refresh the current page
+                    location.reload();
+                  }
+                });
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
+        .catch(function (error) {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Oops There seems to be a duplication in the role Name!",
+          });
+        });
+        //renable the update button
+        this.disabled = false
+      }
+      else{
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please ensure that Job role Name & Description are not empty!",
+        });
+        //renable the update button
+        this.disabled = false
       }
     },
   },

@@ -38,6 +38,7 @@ def add_learningjourney():
 
 
     print("here")
+    
 
     learningjourney = LearningJourney(lj_name=lj_name,staff_id=staff_id,jobrole_id=jobrole_id, lj_id = LearningJourney.query.filter(LearningJourney.lj_id != None).order_by(LearningJourney.lj_id).all()[-1].lj_id + 1)
 

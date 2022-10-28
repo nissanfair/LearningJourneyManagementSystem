@@ -232,17 +232,20 @@ const app1 = Vue.createApp({
       }
 
       console.log(course_list);
+      console.log(this.jobroleselection);
 
       
       url = "http://localhost:5000/learningjourney"
       console.log(staff_id);
+      var postObject = {
+        staff_id: parseInt(staff_id),
+        lj_name: "test",
+        jobrole_id:this.jobroleselection,
+        courses : course_list
+        }
+        console.log(postObject);
       axios
-          .post(url, {
-            staff_id: staff_id,
-            lj_name: "test",
-            jobrole_id:this.jobrole_id,
-            courses : course_list
-            })
+          .post(url, postObject)
             .then((response) => {
               console.log("WHY")
             })

@@ -33,7 +33,8 @@ const app1 = Vue.createApp({
       linked_skills_list: [], //this will hold the skills linked to the selected job role
       courses_list: [], //this will hold the courses that can help clear a particular skill
       selected_skill_id: "", //this will hold the currently selected skill id 
-      skill_courses_list : []
+      skill_courses_list : [],
+      skill_id:""
     };
   },
   methods: {
@@ -217,6 +218,43 @@ const app1 = Vue.createApp({
 
       console.log(course_skill)
       console.log(this.skill_courses_list[0])
+
+    },
+    createlj(){
+      console.log("HI");
+      console.log(this.skill_courses_list);
+
+      let course_list = [];
+
+      for(let courseobject of this.skill_courses_list) {
+        console.log(courseobject);
+        course_list.push(courseobject["courseID"]);
+      }
+
+      console.log(course_list);
+
+      
+      axios
+          .post(url, {
+            skill_name: this.skillName,
+            skill_desc: this.skillDesc,
+          })
+          .then((response) => {
+            // process response.data
+            console.log("create response:" + response.data.code);
+            
+      url = "http://localhost:5000/learningjourney"
+      console.log(staff_id);
+      axios
+          .post(url, {
+            staff_id: staff_id,
+            lj_name: "test",
+            jobrole_id:this.jobrole_id,
+            courses : course_list
+            })
+            .then((response) => {
+              console.log("WHY")
+            })
 
     }
   },

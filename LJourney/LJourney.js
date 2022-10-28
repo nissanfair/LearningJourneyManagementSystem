@@ -234,15 +234,6 @@ const app1 = Vue.createApp({
       console.log(course_list);
 
       
-      axios
-          .post(url, {
-            skill_name: this.skillName,
-            skill_desc: this.skillDesc,
-          })
-          .then((response) => {
-            // process response.data
-            console.log("create response:" + response.data.code);
-            
       url = "http://localhost:5000/learningjourney"
       console.log(staff_id);
       axios
@@ -257,6 +248,7 @@ const app1 = Vue.createApp({
             })
 
     }
+    
   },
   created() {
     this.current_staff_id = staff_id;

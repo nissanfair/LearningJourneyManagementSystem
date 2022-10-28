@@ -31,7 +31,9 @@ const app1 = Vue.createApp({
       job_roles: [], //This will hold the selection of job roles
       jobroleselection: "", // this will hold the job role selection from the dropdown list
       linked_skills_list: [], //this will hold the skills linked to the selected job role
-      courses_list: [] //this will hold the courses that can help clear a particular skill
+      courses_list: [], //this will hold the courses that can help clear a particular skill
+      selected_skill_id: "", //this will hold the currently selected skill id 
+      skill_courses_list : []
     };
   },
   methods: {
@@ -188,6 +190,7 @@ const app1 = Vue.createApp({
       }
     },
     populate(id){// here we will populate the table to show the courses to clear a particular selected skill
+      this.selected_skill_id = id
       url = "http://localhost:5000/skill/" + id
       axios
           .get(url)
@@ -201,6 +204,19 @@ const app1 = Vue.createApp({
             // handle error
             console.log(error);
           });
+
+    },
+    save(cid,cname){//here we will save the user selection 
+      console.log("hello")
+      //first grab the current skillid
+      let skillid = this.selected_skill_id
+
+      let course_skill = {skillID:skillid, courseName:cname, courseID:cid};
+
+      this.skill_courses_list.push(course_skill)
+
+      console.log(course_skill)
+      console.log(this.skill_courses_list[0])
 
     }
   },

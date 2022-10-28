@@ -187,6 +187,7 @@
                     <th scope="col">Course Name</th>
                     <th scope="col">Course Description</th>
                     <th scope="col">Course Category</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -196,6 +197,7 @@
                     <td>{{course.course_name}}</td>
                     <td>{{course.course_desc}}</td>
                     <td>{{course.course_category}}</td>
+                    <td><button type="button" class="btn btn-success" @click="save(course.course_id,course.course_name)">Success</button></td>
                   </tr>
                 </tbody>
               </table>

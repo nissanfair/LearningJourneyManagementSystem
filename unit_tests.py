@@ -13,6 +13,7 @@ class TestSkill(unittest.TestCase):
             'roleskills' : [],
             'isDeleted' : False
         })
+        print("Passed testing of skill unit!")
         
 
 if __name__ == "__main__":

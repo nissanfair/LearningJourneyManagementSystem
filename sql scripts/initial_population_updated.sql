@@ -117,7 +117,8 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
 (1, 'Data Analyst', 'Analyses Data');
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
-(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
+(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data'),
+(2, 'Cybersecurity', 'Cybersecurity is the practice of deploying technologies to protect sensitive information from digital attacks');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`, `jobrole_id`,`staff_id`) VALUES
 (1, 'LJ to be swe', '1', 1);

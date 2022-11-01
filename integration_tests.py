@@ -80,6 +80,76 @@ class TestCreateSkill(TestApp):
         })
         print("Passed creation of skill with duplicate!")
 
+class TestAssignSkillToCourse(TestApp):
+
+    def test_assign_skill_to_course(self):
+        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        c1 = Course(course_id="IS111",
+                    course_name='test name',
+                    course_desc='test desc',
+                    course_status = "Active",
+                    course_type = "Internal",
+                    course_category="Technical",
+                    )
+        db.session.add(s1)
+        db.session.add(c1)
+        db.session.commit()
+
+        request_body = {
+            'course_id' : 'IS111',
+            'skill_id' : 1
+        }
+
+
+        response = self.client.post("/courseskill",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {
+            "code": 201,
+            "data": {
+                "course_id": "IS111",
+                "csid": 1,
+                "skill_id": 1
+            }
+        })
+        print("Passed assign skill to course!")
+
+    def test_assign_skill_to_course_already_exists(self):
+        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        c1 = Course(course_id="IS111",
+                    course_name='test name',
+                    course_desc='test desc',
+                    course_status = "Active",
+                    course_type = "Internal",
+                    course_category="Technical",
+                    )
+        cs1 = CourseSkill(csid=1, course_id="IS111", skill_id=1)
+        db.session.add(s1)
+        db.session.add(c1)
+        db.session.add(cs1)
+        db.session.commit()
+
+        request_body = {
+            'course_id' : 'IS111',
+            'skill_id' : 1
+        }
+
+
+        response = self.client.post("/courseskill",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {
+            "code": 400,
+            "message": "A courseskill with skill_id '1' and course_id 'IS111' already exists."
+        })
+        print("Passed assign skill to course that already exists!")
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

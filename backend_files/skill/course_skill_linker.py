@@ -91,7 +91,13 @@ def add_courseskill():
 
 
     data = request.get_json()
-    courseskill = CourseSkill(**data, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+    csid = 1
+    try:
+        csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1
+    except:
+        pass
+
+    courseskill = CourseSkill(**data, csid = csid)
 
     #check if courseskill with same skill and course already exists
     if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():

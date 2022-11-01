@@ -53,11 +53,10 @@ def update_roleskill_forrole(jobrole_id):
         for rs in roleskill:
             db.session.delete(rs)
 
-# ----------------------------------WEIRD???----------------------------------------------------------------------------
         unique_jobrole_id = []
         # add new roleskills for skill
         for roleskillobject in data['roleskills']:
-            skill_id = roleskillobject['jobrole_id']
+            skill_id = roleskillobject['skill_id']
             if skill_id not in unique_jobrole_id:
                 unique_jobrole_id.append(skill_id)
             else:

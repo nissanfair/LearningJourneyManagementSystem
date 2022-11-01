@@ -35,6 +35,7 @@ class TestApp(flask_testing.TestCase):
         db.session.remove()
         db.drop_all()
 
+# Testing of Skills folder
 
 class TestCreateSkill(TestApp):
     def test_create_skill(self):
@@ -147,6 +148,46 @@ class TestAssignSkillToCourse(TestApp):
             "message": "A courseskill with skill_id '1' and course_id 'IS111' already exists."
         })
         print("Passed assign skill to course that already exists!")
+
+class TestAssignSkillToJobRole(TestApp):
+    
+    def test_assign_skill_to_jobrole(self):
+        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        jr1 = JobRole(jobrole_id = 3, jobrole_name='test name', jobrole_desc='test desc')
+
+        db.session.add(s1)
+        db.session.add(jr1)
+        db.session.commit()
+
+        request_body = {
+            'roleskills' : [
+                {
+                    'skill_id' : 1
+                }
+            ]
+        }
+
+        jobrole_id = 3
+
+        response = self.client.put(f"/jobrole/{jobrole_id}/roleskills",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {
+            "code": 200,
+            "data": [{
+                "jobrole_id": 3,
+                "rsid": 1,
+                "skill_id": 1
+            }]
+        })
+        print("Passed assign skill to jobrole!")
+
+
+
+    
+        
 
 
 

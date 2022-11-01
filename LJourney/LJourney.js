@@ -208,49 +208,91 @@ const app1 = Vue.createApp({
 
     },
     save(cid,cname){//here we will save the user selection 
-      console.log("hello")
       //first grab the current skillid
       let skillid = this.selected_skill_id
 
       let course_skill = {skillID:skillid, courseName:cname, courseID:cid};
-
-      this.skill_courses_list.push(course_skill)
-
-      console.log(course_skill)
-      console.log(this.skill_courses_list[0])
-
+      let x = true;
+      for(let i = 0; i<this.skill_courses_list.length; i++){
+        if(this.skill_courses_list[i].courseID == cid){
+          x = false;
+        }
+      }
+      if (x == true){
+        this.skill_courses_list.push(course_skill);
+      }
+    },
+    remove(index){
+      this.skill_courses_list.splice(index, 1)
     },
     createlj(){
-      console.log("HI");
-      console.log(this.skill_courses_list);
-
-      let course_list = [];
-
-      for(let courseobject of this.skill_courses_list) {
-        console.log(courseobject);
-        course_list.push(courseobject["courseID"]);
-      }
-
-      console.log(course_list);
-      console.log(this.jobroleselection);
 
       
-      url = "http://localhost:5000/learningjourney"
-      console.log(staff_id);
-      var postObject = {
-        staff_id: parseInt(staff_id),
-        lj_name: "test",
-        jobrole_id:this.jobroleselection,
-        courses : course_list
+      if(this.skill_courses_list.length == 0 || this.lj_name.length == 0){
+        Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "The Learning Journey name and your course selections must be filled up!",
+            });
+      }else{
+        console.log(this.lj_name)
+        let course_list = [];
+        for(let courseobject of this.skill_courses_list) {
+          console.log(courseobject);
+          course_list.push(courseobject["courseID"]);
         }
-        console.log(postObject);
-      axios
+        url = "http://localhost:5000/learningjourney"
+
+        var postObject = {
+          staff_id: parseInt(staff_id),
+          lj_name: this.lj_name,
+          jobrole_id:this.jobroleselection,
+          courses : course_list
+          }
+
+        axios
           .post(url, postObject)
             .then((response) => {
-              console.log("WHY")
+              console.log("create response:" + response.data.code);
+              stat = response.data.code;
+              if (stat) {
+                Swal.fire({
+                  title: "Created!",
+                  text: "New Learning Journey has been created.",
+                  icon: "success",
+                  allowOutsideClick: false,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.disabled = false;
+                    //refresh the current page
+                    location.reload();
+                  }
+                });
+              }
             })
+            .catch((error) => {
+              // process error object
+              this.disabled = false;
+              console.log(error.response.status);
+    
+                //When jobrole already exists
+              if (error.response.status) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "A Learning Journey with the same name already Exists!",
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Oops Something Went Wrong!",
+                });
+              }
+            });
 
-    }
+      }
+  }
     
   },
   created() {

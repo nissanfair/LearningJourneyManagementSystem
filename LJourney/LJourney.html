@@ -157,7 +157,7 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="form-select" class="form-label">Name</label>
-              <input type="text" class="form-control" id="lj_name" placeholder="Enter Name of Learning Journey">
+              <input type="text" class="form-control" id="lj_name" v-model="lj_name" placeholder="Enter Name of Learning Journey">
             </div>
             <div class="mb-3">
               <label for="form-select" class="form-label">Select Job Role</label>
@@ -200,7 +200,21 @@
                     <td>{{course.course_name}}</td>
                     <td>{{course.course_desc}}</td>
                     <td>{{course.course_category}}</td>
-                    <td><button type="button" class="btn btn-success" @click="save(course.course_id,course.course_name)">Success</button></td>
+                    <td><button type="button" class="btn btn-success" @click="save(course.course_id,course.course_name)">Add</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mb-3">
+              <label for="table" class="form-label">Final Selection</label>
+              <table class="table" v-if="skill_courses_list.length !=0">
+                <tbody>
+                  <tr v-for="(course, index) in skill_courses_list">
+                    <th scope="row">{{index + 1}}</th>
+                    <td>{{course.courseID}}</td>
+                    <td>{{course.courseName}}</td>
+
+                    <td><button type="button" class="btn btn-danger" @click = "remove(index-1)">Remove</button></td>
                   </tr>
                 </tbody>
               </table>

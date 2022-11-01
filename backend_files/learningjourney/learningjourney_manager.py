@@ -1,6 +1,6 @@
 from __main__ import app, db, Skill, Course, JobRole, Staff, LearningJourneyCourse, LearningJourney
 from flask import jsonify, request
-
+from sqlalchemy import func
 
 
 
@@ -36,18 +36,20 @@ def add_learningjourney():
     jobrole_id = data["jobrole_id"]
     lj_name = data["lj_name"]
 
-
-    print("here")
-    
-
     learningjourney = LearningJourney(lj_name=lj_name,staff_id=staff_id,jobrole_id=jobrole_id, lj_id = LearningJourney.query.filter(LearningJourney.lj_id != None).order_by(LearningJourney.lj_id).all()[-1].lj_id + 1)
 
+    if (LearningJourney.query.filter(func.lower(LearningJourney.lj_name)== lj_name).first()):
+            return jsonify(
+                {
+                    "code": 400,
+                    "message": "A Learning Journey with the same name already exists."
+                }
+            ), 400
+
+
     try:
-        print("there")
         db.session.add(learningjourney)
-        print("fk u")
         db.session.commit()
-        print("testing")
 
         lj_id = learningjourney.lj_id
         for course_id in courses:

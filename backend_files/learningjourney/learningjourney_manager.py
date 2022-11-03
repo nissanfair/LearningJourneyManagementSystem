@@ -1,5 +1,6 @@
-from __main__ import app, db, Skill, Course, JobRole
-from __main__ import LearningJourneyCourse, LearningJourney
+from __main__ import app, db
+from api_app import Skill, Course, JobRole
+from api_app import LearningJourneyCourse, LearningJourney
 from flask import jsonify
 
 

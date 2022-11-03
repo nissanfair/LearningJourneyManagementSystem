@@ -1,4 +1,5 @@
-from __main__ import app, db, JobRole, Skill
+from __main__ import app, db
+from api_app import JobRole, Skill
 
 from flask import jsonify, request
 from sqlalchemy import func

@@ -1,4 +1,5 @@
-from __main__ import app, db, Skill, CourseSkill
+from __main__ import app, db
+from api_app import Skill, CourseSkill
 
 from flask import jsonify, request
 

@@ -1,4 +1,5 @@
-from __main__ import app, db, Role
+from __main__ import app, db
+from api_app import Role
 
 
 from flask import jsonify, request

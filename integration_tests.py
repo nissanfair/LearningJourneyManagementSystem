@@ -295,6 +295,40 @@ class TestLearningJourney(TestApp):
 
         print("passed deletion of learning journey test")
 
+# Testing of role folder
+class TestRole(TestApp):
+    def test_retrieve_role(self):
+        response = self.client.get("/role")
+
+        self.assertEqual(response.json, {
+            'code': 404,
+            'message': 'There are no roles.'
+        })
+        print("passed role retrieval test with empty database")
+
+    def test_retrieve_role_populated_database(self):
+        r1 = Role(
+                    role_id=1,
+                    role_name='test name'
+                )
+
+        db.session.add(r1)
+        db.session.commit()
+
+        response = self.client.get("/role")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'roles': [
+                    {
+                        'role_id': 1,
+                        'role_name': 'test name'
+                    }
+                ]
+            }
+        })
+        print("passed role retrieval test with populated database")
 
     
 
@@ -450,8 +484,47 @@ class TestAssignSkillToJobRole(TestApp):
         print("Passed assign skill to jobrole!")
 
 
+# Testing of staff folder
+class TestStaff(TestApp):
+    def test_retrieve_staff_empty_database(self):
+        response = self.client.get("/staff")
 
-    
+        self.assertEqual(response.json, {
+            'code': 404,
+            'message': 'There are no staffs.'
+        })
+        print("passed staff retrieval test with empty database")
+
+    def test_retrieve_staff_populated_database(self):
+        staff1 = Staff(
+                    staff_id=1,
+                    staff_fname='Apple',
+                    staff_lname='Tan',
+                    dept='HR',
+                    email='apple.tan.hr@spm.com',
+                    role=1
+                )
+
+        db.session.add(staff1)
+        db.session.commit()
+
+        response = self.client.get("/staff")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'staffs': [
+                    {
+                        'dept': 'HR',
+                        'email': 'apple.tan.hr@spm.com',
+                        'role': 1,
+                        'staff_fname': 'Apple',
+                        'staff_id': 1,
+                        'staff_lname': 'Tan'
+                    }
+                ]
+            }
+        })
         
 
 

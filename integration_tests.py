@@ -24,6 +24,7 @@ class TestApp(flask_testing.TestCase):
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
     app.config['TESTING'] = True
+    maxDiff = None
 
     def create_app(self):
         return app
@@ -35,7 +36,158 @@ class TestApp(flask_testing.TestCase):
         db.session.remove()
         db.drop_all()
 
-# Testing of Skills folder
+# Testing of Course folder
+
+class TestRetrieveCourse(TestApp):
+    def test_retrieve_course_empty_database(self):
+        response = self.client.get("/course")
+
+        self.assertEqual(response.json, {
+            'code': 404,
+            'message': 'There are no courses.'
+
+        })
+        print("passed course retrieval test with empty database")
+
+    def test_retrieve_course(self):
+        c1 = Course(course_id="IS111",
+                    course_name='test name',
+                    course_desc='test desc',
+                    course_status = "Active",
+                    course_type = "Internal",
+                    course_category="Technical",
+                    )
+        db.session.add(c1)
+        db.session.commit()
+
+        response = self.client.get("/course")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                    'courses': [
+                        {'course_category': 'Technical',
+                        'course_desc': 'test desc',
+                        'course_id': 'IS111',
+                        'course_name': 'test name',
+                        'course_status': 'Active',
+                        'course_type': 'Internal',
+                        'courseskills': [],
+                        'ljcourses': [],
+                        'registrations': []}
+                        ]
+                    }
+                })
+        print("passed course retrieval test with populated database")
+
+# Testing of jobrole folder
+class TestJobRole(TestApp):
+    def test_retrieve_jobrole_empty_database(self):
+        response = self.client.get("/jobrole")
+
+        self.assertEqual(response.json, {
+            'code': 404,
+            'message': 'There are no jobroles.'
+        })
+        print("passed job role retrieval test with empty database")
+
+    def test_retrieve_jobrole(self):
+        j1 = JobRole(jobrole_id=1,
+                     jobrole_name='test name',
+                     jobrole_desc='test desc'
+                     )
+        db.session.add(j1)
+        db.session.commit()
+
+        response = self.client.get("/jobrole")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'jobroles': [
+                    {
+                        'isDeleted': False,
+                        'jobrole_desc': 'test desc',
+                        'jobrole_id': 1,
+                        'jobrole_name': 'test name',
+                        'learningjourneys': [],
+                        'roleskills': []
+                    }
+                ]
+            }
+        })
+        print("passed job role retrieval test with populated database")
+
+    def test_create_jobrole(self):
+        response = self.client.post("/jobrole", json={
+            'jobrole_name': 'test name',
+            'jobrole_desc': 'test desc'
+        })
+
+        self.assertEqual(response.json, {
+            'code': 201,
+            'data': {
+                'isDeleted': False,
+                'jobrole_desc': 'test desc',
+                'jobrole_id': 1,
+                'jobrole_name': 'test name',
+                'learningjourneys': [],
+                'roleskills': []
+            }
+        })
+        print("passed job role creation test")
+
+    def test_soft_delete_jobrole(self):
+        j1 = JobRole(jobrole_id=1,
+                     jobrole_name='test name',
+                     jobrole_desc='test desc'
+                     )
+        db.session.add(j1)
+        db.session.commit()
+
+        response = self.client.get("/jobrole/1/softdelete")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'isDeleted': True,
+                'jobrole_desc': 'test desc',
+                'jobrole_id': 1,
+                'jobrole_name': 'test name',
+                'learningjourneys': [],
+                'roleskills': []
+            }
+        })
+        print("passed job role soft delete test")
+
+    def test_update_jobrole(self):
+        j1 = JobRole(jobrole_id=1,
+                     jobrole_name='test name',
+                     jobrole_desc='test desc'
+                     )
+        db.session.add(j1)
+        db.session.commit()
+
+        response = self.client.put("/jobrole/1", json={
+            'jobrole_name': 'test name updated',
+            'jobrole_desc': 'test desc updated'
+        })
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'isDeleted': False,
+                'jobrole_desc': 'test desc updated',
+                'jobrole_id': 1,
+                'jobrole_name': 'test name updated',
+                'learningjourneys': [],
+                'roleskills': []
+            }
+        })
+        print("passed job role update test")
+
+
+# Testing of skill folder
 
 class TestCreateSkill(TestApp):
     def test_create_skill(self):

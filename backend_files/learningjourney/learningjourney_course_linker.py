@@ -1,4 +1,4 @@
-from __main__ import app, db, LearningJourneyCourse
+from __main__ import app, LearningJourneyCourse
 from flask import jsonify
 
 

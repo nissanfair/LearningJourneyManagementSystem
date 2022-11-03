@@ -1,4 +1,4 @@
-from __main__ import app, db, Registration
+from __main__ import app, Registration
 
 
 from flask import jsonify

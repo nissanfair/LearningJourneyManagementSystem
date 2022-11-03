@@ -1,4 +1,4 @@
-from __main__ import app, db, Staff
+from __main__ import app, Staff
 
 from flask import jsonify
 

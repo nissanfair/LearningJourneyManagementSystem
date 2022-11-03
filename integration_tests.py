@@ -17,6 +17,17 @@ if __name__ == '__main__':
     from backend_files.learningjourney import learningjourney_manager
     from backend_files.learningjourney import learningjourney_course_linker
 
+    course_retrieval
+    staff_retrieval
+    role_retrieval
+    registration_retrieval
+    jobrole_manager
+    skill_manager
+    course_skill_linker
+    jobrole_skills_linker
+    learningjourney_manager
+    learningjourney_course_linker
+
 
 class TestApp(flask_testing.TestCase):
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"

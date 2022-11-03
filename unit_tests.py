@@ -1,5 +1,7 @@
 import unittest
-from api_app import Skill, Course, JobRole, LearningJourney, Staff, Role, LearningJourneyCourse, Registration, CourseSkill, RoleSkill
+from api_app import Skill, Course, JobRole, LearningJourney
+from api_app import Staff, Role, LearningJourneyCourse, Registration
+from api_app import CourseSkill, RoleSkill
 
 
 class TestSkill(unittest.TestCase):
@@ -58,22 +60,6 @@ class TestJobrole(unittest.TestCase):
 
 class TestLearningJourney(unittest.TestCase):
     def test_learningjourney(self):
-        r1 = Role(role_id=1,
-                  role_name='test name'
-                  )
-
-        s1 = Staff(staff_id=1,
-                   staff_fname='Piplup',
-                   staff_lname='Pikachu',
-                   dept='Human Resource',
-                   email='piplup@pikachu.com',
-                   role=1)
-
-        j1 = JobRole(jobrole_id=1,
-                     jobrole_name='test name',
-                     jobrole_desc='test desc'
-                     )
-
         lj1 = LearningJourney(lj_id=1,
                               lj_name='test name',
                               jobrole_id=1,
@@ -92,20 +78,6 @@ class TestLearningJourney(unittest.TestCase):
 
 class TestLearningJourneyCourse(unittest.TestCase):
     def test_learningjourneycourse(self):
-        lj1 = LearningJourney(lj_id=1,
-                              lj_name='test name',
-                              jobrole_id=1,
-                              staff_id=1
-                              )
-
-        c1 = Course(course_id="IS111",
-                    course_name='test name',
-                    course_desc='test desc',
-                    course_status="Active",
-                    course_type="Internal",
-                    course_category="Technical",
-                    )
-
         ljcourse1 = LearningJourneyCourse(ljc_id=1, lj_id=1,
                                           course_id="IS111"
                                           )
@@ -120,21 +92,6 @@ class TestLearningJourneyCourse(unittest.TestCase):
 
 class TestRegistration(unittest.TestCase):
     def test_registration(self):
-        s1 = Staff(staff_id=1,
-                   staff_fname='Piplup',
-                   staff_lname='Pikachu',
-                   dept='Human Resource',
-                   email='piplup@pikachu.com',
-                   role=1)
-
-        c1 = Course(course_id="IS111",
-                    course_name='test name',
-                    course_desc='test desc',
-                    course_status="Active",
-                    course_type="Internal",
-                    course_category="Technical",
-                    )
-
         r1 = Registration(reg_id=1,
                           reg_status="Pending",
                           completion_status="Pending",
@@ -167,16 +124,6 @@ class TestRole(unittest.TestCase):
 
 class TestCourseSkill(unittest.TestCase):
     def test_courseskill(self):
-        c1 = Course(course_id="IS111",
-                    course_name='test name',
-                    course_desc='test desc',
-                    course_status="Active",
-                    course_type="Internal",
-                    course_category="Technical",
-                    )
-
-        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
-
         cs1 = CourseSkill(csid=1,
                           course_id="IS111",
                           skill_id=1
@@ -192,13 +139,6 @@ class TestCourseSkill(unittest.TestCase):
 
 class TestJobroleSkill(unittest.TestCase):
     def test_jobroleskill(self):
-        j1 = JobRole(jobrole_id=1,
-                     jobrole_name='test name',
-                     jobrole_desc='test desc'
-                     )
-
-        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
-
         rs1 = RoleSkill(rsid=1,
                         jobrole_id=1,
                         skill_id=1
@@ -214,10 +154,6 @@ class TestJobroleSkill(unittest.TestCase):
 
 class TestStaff(unittest.TestCase):
     def test_staff(self):
-        r1 = Role(role_id=1,
-                  role_name='test name'
-                  )
-
         s1 = Staff(staff_id=1,
                    staff_fname='Piplup',
                    staff_lname='Pikachu',
@@ -237,4 +173,5 @@ class TestStaff(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    print("-- Unit Testing --")
     unittest.main()

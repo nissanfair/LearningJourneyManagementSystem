@@ -27,7 +27,7 @@ def learningjourneyuser(staff_id):
     # print(LearningJourney['staff_id'])
 
     listoflj = LearningJourney.query.filter_by(staff_id=staff_id)
-    staff = Staff.query.filter_by(staff_id=staff_id).first()
+
     if listoflj:
         learningjourneysjson = []
 

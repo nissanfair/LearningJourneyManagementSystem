@@ -3,8 +3,6 @@ from __main__ import app, db, Staff
 from flask import jsonify
 
 
-
-
 @app.route('/staff')
 def staff():
     staffs = Staff.query.all()
@@ -25,6 +23,7 @@ def staff():
             "message": "There are no staffs."
         }
     ), 404
+
 
 @app.route('/staff/<int:staff_id>')
 def find_staff(staff_id):

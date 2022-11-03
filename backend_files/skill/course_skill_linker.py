@@ -3,7 +3,6 @@ from __main__ import app, db, Skill, CourseSkill
 from flask import jsonify, request
 
 
-
 @app.route('/courseskill')
 def courseskill():
     courseskills = CourseSkill.query.all()
@@ -26,6 +25,8 @@ def courseskill():
     ), 404
 
 # put request to courseskill with only skill_id
+
+
 @app.route('/skill/<int:skill_id>/courseskills', methods=['PUT'])
 def update_courseskill_forskill(skill_id):
 
@@ -34,7 +35,6 @@ def update_courseskill_forskill(skill_id):
         print(data)
         skill = Skill.query.filter_by(skill_id=skill_id).first()
         courseskill = CourseSkill.query.filter_by(skill_id=skill_id).all()
-
 
         # delete all courseskills for skill
         for cs in courseskill:
@@ -51,19 +51,18 @@ def update_courseskill_forskill(skill_id):
 
             csid = 1
             try:
-                csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1
+                csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(
+                    CourseSkill.csid).all()[-1].csid + 1
             except:
                 pass
-            
-            
-            courseskill = CourseSkill(skill_id=skill_id, course_id=course_id, csid = csid)
-            db.session.add(courseskill)
-        
-        db.session.commit()
-        
-        
 
-        #return updated courseskills
+            courseskill = CourseSkill(
+                skill_id=skill_id, course_id=course_id, csid=csid)
+            db.session.add(courseskill)
+
+        db.session.commit()
+
+        # return updated courseskills
         return jsonify(
             {
                 "code": 200,
@@ -79,27 +78,21 @@ def update_courseskill_forskill(skill_id):
         ), 500
 
 
-    
-
-
 # post request to courseskill
 @app.route('/courseskill', methods=['POST'])
 def add_courseskill():
 
-
-
-
-
     data = request.get_json()
     csid = 1
     try:
-        csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1
+        csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(
+            CourseSkill.csid).all()[-1].csid + 1
     except:
         pass
 
-    courseskill = CourseSkill(**data, csid = csid)
+    courseskill = CourseSkill(**data, csid=csid)
 
-    #check if courseskill with same skill and course already exists
+    # check if courseskill with same skill and course already exists
     if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():
         return jsonify(
             {
@@ -115,7 +108,8 @@ def add_courseskill():
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the courseskill." #should not happen because checks in place to prevent duplicate csid
+                # should not happen because checks in place to prevent duplicate csid
+                "message": "An error occurred creating the courseskill."
             }
         ), 500
 
@@ -126,13 +120,13 @@ def add_courseskill():
         }
     ), 201
 
-    
 
 # delete request to courseskill
 @app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['DELETE'])
 def delete_courseskill(course_id, skill_id):
-    courseskill = CourseSkill.query.filter_by(course_id=course_id, skill_id=skill_id).first()
-    
+    courseskill = CourseSkill.query.filter_by(
+        course_id=course_id, skill_id=skill_id).first()
+
     if courseskill:
         db.session.delete(courseskill)
         db.session.commit()

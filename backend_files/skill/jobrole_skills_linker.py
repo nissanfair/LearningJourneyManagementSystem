@@ -2,8 +2,6 @@ from __main__ import app, db, JobRole, RoleSkill
 from flask import jsonify, request
 
 
-
-
 @app.route('/roleskill')
 def roleskill():
     roleskills = RoleSkill.query.all()
@@ -23,6 +21,7 @@ def roleskill():
         }
     ), 404
 
+
 @app.route('/roleskill/<int:roleskill_id>')
 def find_roleskill(roleskill_id):
     roleskill = RoleSkill.query.filter_by(roleskill_id=roleskill_id).first()
@@ -40,6 +39,7 @@ def find_roleskill(roleskill_id):
         }
     ), 404
 
+
 @app.route('/jobrole/<int:jobrole_id>/roleskills', methods=['PUT'])
 def update_roleskill_forrole(jobrole_id):
     try:
@@ -47,7 +47,6 @@ def update_roleskill_forrole(jobrole_id):
         print(data)
         jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
         roleskill = RoleSkill.query.filter_by(jobrole_id=jobrole_id).all()
-
 
         # delete all roleskills for skill
         for rs in roleskill:
@@ -64,18 +63,17 @@ def update_roleskill_forrole(jobrole_id):
 
             rsid = 1
             try:
-                rsid = RoleSkill.query.filter(RoleSkill.rsid != None).order_by(RoleSkill.rsid).all()[-1].rsid + 1
+                rsid = RoleSkill.query.filter(RoleSkill.rsid != None).order_by(
+                    RoleSkill.rsid).all()[-1].rsid + 1
             except:
                 pass
-            
-            
-            roleskill = RoleSkill(skill_id=skill_id, jobrole_id=jobrole_id, rsid = rsid)
+
+            roleskill = RoleSkill(
+                skill_id=skill_id, jobrole_id=jobrole_id, rsid=rsid)
             db.session.add(roleskill)
         db.session.commit()
-        
-        
 
-        #return updated roleskills
+        # return updated roleskills
         return jsonify(
             {
                 "code": 200,

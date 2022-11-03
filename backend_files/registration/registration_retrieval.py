@@ -4,9 +4,7 @@ from __main__ import app, db, Registration
 from flask import jsonify
 
 
-
-
-#get registrations
+# get registrations
 @app.route('/registration')
 def registration():
     registrations = Registration.query.all()

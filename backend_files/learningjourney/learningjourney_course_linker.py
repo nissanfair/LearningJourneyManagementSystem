@@ -2,8 +2,7 @@ from __main__ import app, db, LearningJourneyCourse
 from flask import jsonify
 
 
-
-#get learning journey courses table
+# get learning journey courses table
 @app.route('/learningjourneycourse')
 def learningjourneycourse():
     learningjourneycourse = LearningJourneyCourse.query.all()

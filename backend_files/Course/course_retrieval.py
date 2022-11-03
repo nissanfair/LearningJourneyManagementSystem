@@ -3,8 +3,6 @@ from __main__ import app, db, Course
 from flask import jsonify
 
 
-
-
 @app.route('/course')
 def course():
     courses = Course.query.all()
@@ -25,6 +23,7 @@ def course():
             "message": "There are no courses."
         }
     ), 404
+
 
 @app.route('/course/<string:course_id>')
 def find_course(course_id):

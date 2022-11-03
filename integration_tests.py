@@ -4,7 +4,6 @@ import json
 from api_app import app, db, Course, JobRole, LearningJourney, LearningJourneyCourse, Registration, Role, CourseSkill, RoleSkill, Skill, Staff
 
 
-
 if __name__ == '__main__':
     from backend_files.Course import course_retrieval
     from backend_files.staff import staff_retrieval
@@ -17,7 +16,6 @@ if __name__ == '__main__':
     from backend_files.skill import jobrole_skills_linker
     from backend_files.learningjourney import learningjourney_manager
     from backend_files.learningjourney import learningjourney_course_linker
-
 
 
 class TestApp(flask_testing.TestCase):
@@ -38,6 +36,7 @@ class TestApp(flask_testing.TestCase):
 
 # Testing of Course folder
 
+
 class TestRetrieveCourse(TestApp):
     def test_retrieve_course_empty_database(self):
         response = self.client.get("/course")
@@ -53,8 +52,8 @@ class TestRetrieveCourse(TestApp):
         c1 = Course(course_id="IS111",
                     course_name='test name',
                     course_desc='test desc',
-                    course_status = "Active",
-                    course_type = "Internal",
+                    course_status="Active",
+                    course_type="Internal",
                     course_category="Technical",
                     )
         db.session.add(c1)
@@ -65,22 +64,24 @@ class TestRetrieveCourse(TestApp):
         self.assertEqual(response.json, {
             'code': 200,
             'data': {
-                    'courses': [
-                        {'course_category': 'Technical',
-                        'course_desc': 'test desc',
-                        'course_id': 'IS111',
-                        'course_name': 'test name',
-                        'course_status': 'Active',
-                        'course_type': 'Internal',
-                        'courseskills': [],
-                        'ljcourses': [],
-                        'registrations': []}
-                        ]
-                    }
-                })
+                'courses': [
+                    {'course_category': 'Technical',
+                         'course_desc': 'test desc',
+                         'course_id': 'IS111',
+                         'course_name': 'test name',
+                         'course_status': 'Active',
+                         'course_type': 'Internal',
+                         'courseskills': [],
+                         'ljcourses': [],
+                         'registrations': []}
+                ]
+            }
+        })
         print("passed course retrieval test with populated database")
 
 # Testing of jobrole folder
+
+
 class TestJobRole(TestApp):
     def test_retrieve_jobrole_empty_database(self):
         response = self.client.get("/jobrole")
@@ -187,6 +188,8 @@ class TestJobRole(TestApp):
         print("passed job role update test")
 
 # Testing of learningjourney folder
+
+
 class TestLearningJourney(TestApp):
     def test_retrieve_learningjourney_empty_database(self):
         response = self.client.get("/learningjourney")
@@ -199,46 +202,45 @@ class TestLearningJourney(TestApp):
 
     def test_retrieve_learningjourney(self):
         jr1 = JobRole(
-                    jobrole_id=1,
-                    jobrole_name='test name',
-                    jobrole_desc='test desc'
-                )
+            jobrole_id=1,
+            jobrole_name='test name',
+            jobrole_desc='test desc'
+        )
 
         role1 = Role(
-                    role_id=1,
-                    role_name='test name'
-                )
+            role_id=1,
+            role_name='test name'
+        )
 
-            
         staff1 = Staff(
-                    staff_id=1,
-                    staff_fname='Apple',
-                    staff_lname='Tan',
-                    dept='HR',
-                    email='apple.tan.hr@spm.com',
-                    role=1
+            staff_id=1,
+            staff_fname='Apple',
+            staff_lname='Tan',
+            dept='HR',
+            email='apple.tan.hr@spm.com',
+            role=1
         )
 
         c1 = Course(
-                    course_id="IS111",
-                    course_name='test name',
-                    course_desc='test desc',
-                    course_status = "Active",
-                    course_type = "Internal",
-                    course_category="Technical",
-                )
+            course_id="IS111",
+            course_name='test name',
+            course_desc='test desc',
+            course_status="Active",
+            course_type="Internal",
+            course_category="Technical",
+        )
 
         lj1 = LearningJourney(
-                    lj_id=1,
-                    lj_name='test name',
-                    jobrole_id=1,
-                    staff_id=1
+            lj_id=1,
+            lj_name='test name',
+            jobrole_id=1,
+            staff_id=1
         )
 
         ljc1 = LearningJourneyCourse(
-                    ljc_id=1,
-                    course_id='IS111',
-                    lj_id=1
+            ljc_id=1,
+            course_id='IS111',
+            lj_id=1
         )
 
         db.session.add(jr1)
@@ -296,6 +298,8 @@ class TestLearningJourney(TestApp):
         print("passed deletion of learning journey test")
 
 # Testing of role folder
+
+
 class TestRole(TestApp):
     def test_retrieve_role(self):
         response = self.client.get("/role")
@@ -308,9 +312,9 @@ class TestRole(TestApp):
 
     def test_retrieve_role_populated_database(self):
         r1 = Role(
-                    role_id=1,
-                    role_name='test name'
-                )
+            role_id=1,
+            role_name='test name'
+        )
 
         db.session.add(r1)
         db.session.commit()
@@ -330,9 +334,6 @@ class TestRole(TestApp):
         })
         print("passed role retrieval test with populated database")
 
-    
-
-
 
 # Testing of skill folder
 
@@ -340,8 +341,8 @@ class TestCreateSkill(TestApp):
     def test_create_skill(self):
 
         request_body = {
-            'skill_name' : 'test name',
-            'skill_desc' : 'test desc'
+            'skill_name': 'test name',
+            'skill_desc': 'test desc'
         }
 
         response = self.client.post("/skill",
@@ -349,46 +350,46 @@ class TestCreateSkill(TestApp):
                                     content_type='application/json')
 
         self.assertEqual(response.json["data"], {
-            'skill_id' : 1,
-            'skill_name' : 'test name',
-            'skill_desc' : 'test desc',
-            'courseskills' : [],
-            'roleskills' : [],
-            'isDeleted' : False
+            'skill_id': 1,
+            'skill_name': 'test name',
+            'skill_desc': 'test desc',
+            'courseskills': [],
+            'roleskills': [],
+            'isDeleted': False
         })
         print("Passed creation of skill!")
 
     def test_create_skill_invalid_name(self):
-        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
         db.session.add(s1)
         db.session.commit()
 
         request_body = {
-            'skill_name' : 'test name',
-            'skill_desc' : 'test desc 2'
+            'skill_name': 'test name',
+            'skill_desc': 'test desc 2'
         }
 
         response = self.client.post("/skill",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
-
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {
-            'code' : 400,
+            'code': 400,
             'message': 'skill already exists.'
         })
         print("Passed creation of skill with duplicate!")
 
+
 class TestAssignSkillToCourse(TestApp):
 
     def test_assign_skill_to_course(self):
-        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
         c1 = Course(course_id="IS111",
                     course_name='test name',
                     course_desc='test desc',
-                    course_status = "Active",
-                    course_type = "Internal",
+                    course_status="Active",
+                    course_type="Internal",
                     course_category="Technical",
                     )
         db.session.add(s1)
@@ -396,10 +397,9 @@ class TestAssignSkillToCourse(TestApp):
         db.session.commit()
 
         request_body = {
-            'course_id' : 'IS111',
-            'skill_id' : 1
+            'course_id': 'IS111',
+            'skill_id': 1
         }
-
 
         response = self.client.post("/courseskill",
                                     data=json.dumps(request_body),
@@ -417,12 +417,12 @@ class TestAssignSkillToCourse(TestApp):
         print("Passed assign skill to course!")
 
     def test_assign_skill_to_course_already_exists(self):
-        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
+        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
         c1 = Course(course_id="IS111",
                     course_name='test name',
                     course_desc='test desc',
-                    course_status = "Active",
-                    course_type = "Internal",
+                    course_status="Active",
+                    course_type="Internal",
                     course_category="Technical",
                     )
         cs1 = CourseSkill(csid=1, course_id="IS111", skill_id=1)
@@ -432,10 +432,9 @@ class TestAssignSkillToCourse(TestApp):
         db.session.commit()
 
         request_body = {
-            'course_id' : 'IS111',
-            'skill_id' : 1
+            'course_id': 'IS111',
+            'skill_id': 1
         }
-
 
         response = self.client.post("/courseskill",
                                     data=json.dumps(request_body),
@@ -448,20 +447,22 @@ class TestAssignSkillToCourse(TestApp):
         })
         print("Passed assign skill to course that already exists!")
 
+
 class TestAssignSkillToJobRole(TestApp):
-    
+
     def test_assign_skill_to_jobrole(self):
-        s1 = Skill(skill_id = 1, skill_name='test name', skill_desc='test desc')
-        jr1 = JobRole(jobrole_id = 3, jobrole_name='test name', jobrole_desc='test desc')
+        s1 = Skill(skill_id=1, skill_name='test name', skill_desc='test desc')
+        jr1 = JobRole(jobrole_id=3, jobrole_name='test name',
+                      jobrole_desc='test desc')
 
         db.session.add(s1)
         db.session.add(jr1)
         db.session.commit()
 
         request_body = {
-            'roleskills' : [
+            'roleskills': [
                 {
-                    'skill_id' : 1
+                    'skill_id': 1
                 }
             ]
         }
@@ -469,8 +470,8 @@ class TestAssignSkillToJobRole(TestApp):
         jobrole_id = 3
 
         response = self.client.put(f"/jobrole/{jobrole_id}/roleskills",
-                                    data=json.dumps(request_body),
-                                    content_type='application/json')
+                                   data=json.dumps(request_body),
+                                   content_type='application/json')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {
@@ -497,13 +498,13 @@ class TestStaff(TestApp):
 
     def test_retrieve_staff_populated_database(self):
         staff1 = Staff(
-                    staff_id=1,
-                    staff_fname='Apple',
-                    staff_lname='Tan',
-                    dept='HR',
-                    email='apple.tan.hr@spm.com',
-                    role=1
-                )
+            staff_id=1,
+            staff_fname='Apple',
+            staff_lname='Tan',
+            dept='HR',
+            email='apple.tan.hr@spm.com',
+            role=1
+        )
 
         db.session.add(staff1)
         db.session.commit()
@@ -525,10 +526,8 @@ class TestStaff(TestApp):
                 ]
             }
         })
-        
-
-
 
 
 if __name__ == '__main__':
+    print("-- Integration Testing --")
     unittest.main()

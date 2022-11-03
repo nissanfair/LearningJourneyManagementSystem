@@ -1,4 +1,4 @@
-from __main__ import app, db 
+from __main__ import app, db
 from api_app import Course, Skill
 
 

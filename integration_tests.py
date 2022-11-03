@@ -186,6 +186,119 @@ class TestJobRole(TestApp):
         })
         print("passed job role update test")
 
+# Testing of learningjourney folder
+class TestLearningJourney(TestApp):
+    def test_retrieve_learningjourney_empty_database(self):
+        response = self.client.get("/learningjourney")
+
+        self.assertEqual(response.json, {
+            'code': 404,
+            'message': 'There are no learningjourneys.'
+        })
+        print("passed learning journey retrieval test with empty database")
+
+    def test_retrieve_learningjourney(self):
+        jr1 = JobRole(
+                    jobrole_id=1,
+                    jobrole_name='test name',
+                    jobrole_desc='test desc'
+                )
+
+        role1 = Role(
+                    role_id=1,
+                    role_name='test name'
+                )
+
+            
+        staff1 = Staff(
+                    staff_id=1,
+                    staff_fname='Apple',
+                    staff_lname='Tan',
+                    dept='HR',
+                    email='apple.tan.hr@spm.com',
+                    role=1
+        )
+
+        c1 = Course(
+                    course_id="IS111",
+                    course_name='test name',
+                    course_desc='test desc',
+                    course_status = "Active",
+                    course_type = "Internal",
+                    course_category="Technical",
+                )
+
+        lj1 = LearningJourney(
+                    lj_id=1,
+                    lj_name='test name',
+                    jobrole_id=1,
+                    staff_id=1
+        )
+
+        ljc1 = LearningJourneyCourse(
+                    ljc_id=1,
+                    course_id='IS111',
+                    lj_id=1
+        )
+
+        db.session.add(jr1)
+        db.session.add(role1)
+        db.session.add(staff1)
+        db.session.add(c1)
+        db.session.add(lj1)
+        db.session.add(ljc1)
+        db.session.commit()
+
+        response = self.client.get("/learningjourney")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'learningjourneys': [
+                    {
+                        'jobrole_id': 1,
+                        'lj_id': 1,
+                        'lj_name': 'test name',
+                        'ljcourses': [
+                            {
+                                'course_id': 'IS111',
+                                'lj_id': 1,
+                                'ljc_id': 1
+                            }
+                        ],
+                        'staff_id': 1
+                    }
+                ]
+            }
+        })
+
+        print("passed learning journey retrieval test with populated database")
+
+        response = self.client.delete("/learningjourney/1")
+
+        self.assertEqual(response.json, {
+            'code': 200,
+            'data': {
+                'jobrole_id': 1,
+                'lj_id': 1,
+                'lj_name': 'test name',
+                'ljcourses': [
+                    {
+                        'course_id': 'IS111',
+                        'lj_id': 1,
+                        'ljc_id': 1
+                    }
+                ],
+                'staff_id': 1
+            }
+        })
+
+        print("passed deletion of learning journey test")
+
+
+    
+
+
 
 # Testing of skill folder
 

@@ -1,7 +1,9 @@
 import unittest
 import flask_testing
 import json
-from api_app import app, db, Course, JobRole, LearningJourney, LearningJourneyCourse, Registration, Role, CourseSkill, RoleSkill, Skill, Staff
+from api_app import app, db, Course, JobRole
+from api_app import LearningJourney, LearningJourneyCourse
+from api_app import Role, CourseSkill, Skill, Staff
 
 
 if __name__ == '__main__':

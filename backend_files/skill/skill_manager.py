@@ -125,7 +125,7 @@ def add_skill():
     try:
         db.session.add(skill)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,
@@ -171,7 +171,7 @@ def update_skill(skill_id):
             skill.skill_name = data['skill_name']
             skill.skill_desc = data['skill_desc']
             db.session.commit()
-        except:
+        except BaseException:
             return jsonify(
                 {
                     "code": 500,

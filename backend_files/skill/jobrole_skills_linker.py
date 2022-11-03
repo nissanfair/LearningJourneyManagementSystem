@@ -6,14 +6,8 @@ from flask import jsonify, request
 def roleskill():
     roleskills = RoleSkill.query.all()
     if len(roleskills):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "roleskills": [roleskill.json() for roleskill in roleskills]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"roleskills": [
+            roleskill.json() for roleskill in roleskills]}})
     return jsonify(
         {
             "code": 404,
@@ -63,9 +57,9 @@ def update_roleskill_forrole(jobrole_id):
 
             rsid = 1
             try:
-                rsid = RoleSkill.query.filter(RoleSkill.rsid != None).order_by(
+                rsid = RoleSkill.query.filter(RoleSkill.rsid is not None).order_by(
                     RoleSkill.rsid).all()[-1].rsid + 1
-            except:
+            except BaseException:
                 pass
 
             roleskill = RoleSkill(
@@ -80,7 +74,7 @@ def update_roleskill_forrole(jobrole_id):
                 "data": [roleskill.json() for roleskill in jobrole.roleskills]
             }
         )
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,

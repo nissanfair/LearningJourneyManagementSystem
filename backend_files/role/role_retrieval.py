@@ -21,7 +21,7 @@ def add_role():
     try:
         db.session.add(role)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,

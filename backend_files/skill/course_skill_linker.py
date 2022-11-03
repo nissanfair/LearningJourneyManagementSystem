@@ -8,14 +8,8 @@ def courseskill():
     courseskills = CourseSkill.query.all()
 
     if len(courseskills):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "courseskills": [courseskill.json() for courseskill in courseskills]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"courseskills": [
+            courseskill.json() for courseskill in courseskills]}})
 
     return jsonify(
         {
@@ -51,9 +45,9 @@ def update_courseskill_forskill(skill_id):
 
             csid = 1
             try:
-                csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(
+                csid = CourseSkill.query.filter(CourseSkill.csid is not None).order_by(
                     CourseSkill.csid).all()[-1].csid + 1
-            except:
+            except BaseException:
                 pass
 
             courseskill = CourseSkill(
@@ -69,7 +63,7 @@ def update_courseskill_forskill(skill_id):
                 "data": [courseskill.json() for courseskill in skill.courseskills]
             }
         )
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,
@@ -85,30 +79,29 @@ def add_courseskill():
     data = request.get_json()
     csid = 1
     try:
-        csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(
+        csid = CourseSkill.query.filter(CourseSkill.csid is not None).order_by(
             CourseSkill.csid).all()[-1].csid + 1
-    except:
+    except BaseException:
         pass
 
     courseskill = CourseSkill(**data, csid=csid)
 
     # check if courseskill with same skill and course already exists
-    if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():
-        return jsonify(
-            {
-                "code": 400,
-                "message": "A courseskill with skill_id '{}' and course_id '{}' already exists.".format(courseskill.skill_id, courseskill.course_id)
-            }
-        ), 400
+    if CourseSkill.query.filter_by(
+            skill_id=courseskill.skill_id,
+            course_id=courseskill.course_id).first():
+        return jsonify({"code": 400, "message": "A courseskill with skill_id '{}' and course_id '{}' already exists.".format(
+            courseskill.skill_id, courseskill.course_id)}), 400
 
     try:
         db.session.add(courseskill)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,
-                # should not happen because checks in place to prevent duplicate csid
+                # should not happen because checks in place to prevent
+                # duplicate csid
                 "message": "An error occurred creating the courseskill."
             }
         ), 500
@@ -122,7 +115,8 @@ def add_courseskill():
 
 
 # delete request to courseskill
-@app.route('/courseskill/<string:course_id>/<int:skill_id>', methods=['DELETE'])
+@app.route('/courseskill/<string:course_id>/<int:skill_id>',
+           methods=['DELETE'])
 def delete_courseskill(course_id, skill_id):
     courseskill = CourseSkill.query.filter_by(
         course_id=course_id, skill_id=skill_id).first()

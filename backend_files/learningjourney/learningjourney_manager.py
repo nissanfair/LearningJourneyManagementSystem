@@ -8,14 +8,8 @@ def learningjourney():
     learningjourneys = LearningJourney.query.all()
 
     if len(learningjourneys):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"learningjourneys": [
+            learningjourney.json() for learningjourney in learningjourneys]}})
 
     return jsonify(
         {
@@ -115,7 +109,7 @@ def delete_learningjourney(lj_id):
 
             db.session.delete(learningjourney)
             db.session.commit()
-        except:
+        except BaseException:
             return jsonify(
                 {
                     "code": 500,

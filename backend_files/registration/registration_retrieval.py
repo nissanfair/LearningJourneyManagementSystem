@@ -10,14 +10,8 @@ def registration():
     registrations = Registration.query.all()
 
     if len(registrations):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "registrations": [registration.json() for registration in registrations]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"registrations": [
+            registration.json() for registration in registrations]}})
 
     return jsonify(
         {

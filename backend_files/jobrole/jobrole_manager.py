@@ -16,7 +16,8 @@ def update_jobrole(jobrole_id):
         jobrole.jobrole_name = "temp"
         db.session.commit()
 
-        if (JobRole.query.filter(func.lower(JobRole.jobrole_name) == jobrole_name).first()):
+        if (JobRole.query.filter(func.lower(
+                JobRole.jobrole_name) == jobrole_name).first()):
             jobrole.jobrole_name = original_name
             db.session.commit()
             return jsonify(
@@ -29,7 +30,7 @@ def update_jobrole(jobrole_id):
             jobrole.jobrole_name = data['jobrole_name']
             jobrole.jobrole_desc = data['jobrole_desc']
             db.session.commit()
-        except:
+        except BaseException:
             return jsonify(
                 {
                     "code": 500,
@@ -173,7 +174,7 @@ def add_jobrole():
     try:
         db.session.add(jobrole)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,

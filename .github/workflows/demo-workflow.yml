@@ -20,6 +20,18 @@ jobs:
     #Groups together all the steps that run in the check-bats-version job. 
     #Each item nested under this section is a separate action or shell script.
     steps:
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: -798604723
+          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          message: |
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            
+            Repository: ${{ github.repository }}
+            
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
       #The uses keyword specifies that this step will run v3 of the actions/checkout action. 
       #This is an action that checks out your repository onto the runner, 
       #allowing you to run scripts or other actions against your code (such as build and test tools). 

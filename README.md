@@ -8,7 +8,6 @@
 </ol>
 
 # Backend
-# How to get it running:
 <ol>
   <li>Run wamp</li>
   <li>Populate the database with initial_population_updated.sql if not populated before</li>

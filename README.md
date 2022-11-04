@@ -25,10 +25,5 @@ Application Frontend: html, bootstrap, javascript
   <li>integration_test.py & unit_test.py: Unit & integration testing codes</li>
 </ol>
 
-# Frontend
-<ol>
-  <li>Home</li>
-  <li>Roles</li>
-  <li>Skills</li>
-  <li>Learning Journey</li>
-</ol>
+# GitHub Link
+https://github.com/Zuhayley/ljms_spm.git

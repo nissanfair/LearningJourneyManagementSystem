@@ -108,7 +108,8 @@ INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Email`, 
 (1, 'Apple', 'Tan', 'HR', 'apple.tan.hr@spm.com', 1);
 
 INSERT INTO `Course` (`Course_ID`, `Course_Name`, `Course_Desc`, `Course_Status`, `Course_Type`, `Course_Category`) VALUES
-('IS111', 'Introduction to Programming', 'Introductory Python module', 'Active', 'Internal', 'Technical');
+('IS111', 'Introduction to Programming', 'Introductory Python module', 'Active', 'Internal', 'Technical'),
+('IS446', 'Managing Customer Relations with Analytics : Asian Insights', 'Analytics module', 'Active', 'Internal', 'Technical');
 
 INSERT INTO `Registration` (`Reg_ID`, `Course_ID`, `Staff_ID`, `Reg_Status`, `Completion_Status`) VALUES
 (1, 'IS111', 1, 'Registered', 'Completed');
@@ -117,16 +118,19 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
 (1, 'Data Analyst', 'Analyses Data');
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
-(1, 'Data structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data');
+(1, 'Data Structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data'),
+(2, 'Data Visualisation', 'An interdisciplinary field that deals with the graphic representation of data and information');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`, `jobrole_id`,`staff_id`) VALUES
 (1, 'LJ to be swe', '1', 1);
 
 INSERT INTO `roleskill` (`rsid`, `jobrole_id`,`skill_id`) VALUES
-(1, 1, 1);
+(1, 1, 1),
+(2, 1, 2);
 
 INSERT INTO `courseskill` (`csid`, `course_id`,`skill_id`) VALUES
-(1, 'IS111', 1);
+(1, 'IS111', 1),
+(2, 'IS446', 2);
 
 INSERT INTO `learningjourneycourse` (`ljc_id`, `lj_id`,`course_id`) VALUES
 (1, 1, 'IS111');

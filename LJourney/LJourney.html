@@ -152,78 +152,29 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="staticBackdropLabel">Create Learning Journey</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancel"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="mb-3">
-              <label for="form-select" class="form-label">Name</label>
-              <input type="text" class="form-control" id="lj_name" v-model="lj_name" placeholder="Enter Name of Learning Journey">
-            </div>
+
             <div class="mb-3">
               <label for="form-select" class="form-label">Select Job Role</label>
 
-              <select class="form-select" v-model="jobroleselection" v-on:change="obtain" aria-label="Default select example">
-                <option value="">Please select</option>
+              <select class="form-select" aria-label="Default select example">
+                <option>Open this select menu</option>
                 <option v-for="role in job_roles" v-bind:value="role.jobrole_id">{{role.jobrole_name}}</option>
               </select>
 
             </div>
-            <div class="mb-3 result" v-if="jobroleselection !='' ">
-              <label for="list-group" class="form-label">Skills Needed</label>
-
-              <div class="list-group">
-                <a href="#" v-for="skill in linked_skills_list" class="list-group-item list-group-item-action" @click="populate(skill.skill_id)">{{skill.skill_name}}</a>
-              </div>
-            </div>
-
-            <div v-else class="mb-3 result">
-              <label for="list-group" class="form-label">Skills Needed</label>
-            </div>
             
             <div class="mb-3">
-              <label for="table" class="form-label">Courses To Take</label>
-              <table class="table" v-if="courses_list.length !=0">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Course ID</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Course Description</th>
-                    <th scope="col">Course Category</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(course, index) in courses_list">
-                    <th scope="row">{{index + 1}}</th>
-                    <td>{{course.course_id}}</td>
-                    <td>{{course.course_name}}</td>
-                    <td>{{course.course_desc}}</td>
-                    <td>{{course.course_category}}</td>
-                    <td><button type="button" class="btn btn-success" @click="save(course.course_id,course.course_name)">Add</button></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="mb-3">
-              <label for="table" class="form-label">Final Selection</label>
-              <table class="table" v-if="skill_courses_list.length !=0">
-                <tbody>
-                  <tr v-for="(course, index) in skill_courses_list">
-                    <th scope="row">{{index + 1}}</th>
-                    <td>{{course.courseID}}</td>
-                    <td>{{course.courseName}}</td>
-
-                    <td><button type="button" class="btn btn-danger" @click = "remove(index-1)">Remove</button></td>
-                  </tr>
-                </tbody>
-              </table>
+              <label for="exampleFormControlTextarea1" class="form-label">Role Description</label>
+              <textarea maxlength="128" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" @click="cancel">Cancel</button>
-            <button type="button" class="btn btn-primary btn-primary" @click="createlj">Create</button>
+            <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary btn-primary" @click="create">Create</button>
           </div>
         </div>
       </div>

@@ -1,25 +1,18 @@
-from __main__ import app, db, Registration
+from __main__ import app
+from api_app import Registration
 
 
 from flask import jsonify
 
 
-
-
-#get registrations
+# get registrations
 @app.route('/registration')
 def registration():
     registrations = Registration.query.all()
 
     if len(registrations):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "registrations": [registration.json() for registration in registrations]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"registrations": [
+            registration.json() for registration in registrations]}})
 
     return jsonify(
         {

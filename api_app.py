@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 
-DBpassword = '' #for wamp it is default empty string
+DBpassword = ''  # for wamp it is default empty string
 DBport = '3306'
 DBusername = 'root'
 DBhost = 'localhost'
@@ -20,6 +20,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
+
 class Course(db.Model):
     course_id = db.Column(db.String(20), primary_key=True)
     course_name = db.Column(db.String(50), nullable=False)
@@ -27,11 +28,23 @@ class Course(db.Model):
     course_status = db.Column(db.String(15))
     course_type = db.Column(db.String(10))
     course_category = db.Column(db.String(50))
-    registrations = db.relationship('Registration', backref='course', lazy=True)
+    registrations = db.relationship(
+        'Registration', backref='course', lazy=True)
     courseskills = db.relationship('CourseSkill', backref='course', lazy=True)
-    ljcourses = db.relationship('LearningJourneyCourse', backref='course', lazy=True)
+    ljcourses = db.relationship(
+        'LearningJourneyCourse', backref='course', lazy=True)
 
-    def __init__(self,course_id,course_name,course_desc,course_status,course_type,course_category,registrations = list(),courseskills = list(), ljcourses = list()):
+    def __init__(
+            self,
+            course_id,
+            course_name,
+            course_desc,
+            course_status,
+            course_type,
+            course_category,
+            registrations=list(),
+            courseskills=list(),
+            ljcourses=list()):
         self.course_id = course_id
         self.course_name = course_name
         self.course_desc = course_desc
@@ -50,10 +63,13 @@ class Course(db.Model):
             "course_status": self.course_status,
             "course_type": self.course_type,
             "course_category": self.course_category,
-            "registrations": [registration.json() for registration in self.registrations],
-            "courseskills": [courseskill.json() for courseskill in self.courseskills],
-            "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses]
-        }
+            "registrations": [
+                registration.json() for registration in self.registrations],
+            "courseskills": [
+                courseskill.json() for courseskill in self.courseskills],
+            "ljcourses": [
+                ljcourse.json() for ljcourse in self.ljcourses]}
+
 
 class JobRole(db.Model):
     __tablename__ = 'jobrole'
@@ -62,44 +78,54 @@ class JobRole(db.Model):
     jobrole_desc = db.Column(db.String(255), nullable=False)
     roleskills = db.relationship('RoleSkill', backref='jobrole', lazy=True)
     isDeleted = db.Column(db.Boolean, nullable=False, default=False)
-    learningjourneys = db.relationship('LearningJourney', backref='jobrole', lazy=True)
+    learningjourneys = db.relationship(
+        'LearningJourney', backref='jobrole', lazy=True)
 
-    def __init__(self, jobrole_id, jobrole_name, jobrole_desc, roleskills = [], isDeleted = False, learningjourneys = []):
+    def __init__(
+            self,
+            jobrole_id,
+            jobrole_name,
+            jobrole_desc,
+            roleskills=[],
+            isDeleted=False,
+            learningjourneys=[]):
         self.jobrole_id = jobrole_id
         self.jobrole_name = jobrole_name
         self.jobrole_desc = jobrole_desc
         self.roleskills = roleskills
         self.isDeleted = isDeleted
         self.learningjourneys = learningjourneys
-        
 
     def json(self):
         return {
-                "jobrole_id": self.jobrole_id,
-                "jobrole_name": self.jobrole_name,
-                "jobrole_desc": self.jobrole_desc,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "isDeleted": self.isDeleted,
-                "learningjourneys": [learningjourney.json() for learningjourney in self.learningjourneys]
-            }
+            "jobrole_id": self.jobrole_id,
+            "jobrole_name": self.jobrole_name,
+            "jobrole_desc": self.jobrole_desc,
+            "roleskills": [
+                roleskill.json() for roleskill in self.roleskills],
+            "isDeleted": self.isDeleted,
+            "learningjourneys": [
+                learningjourney.json() for learningjourney in self.learningjourneys]}
+
 
 class LearningJourney(db.Model):
     __tablename__ = 'learningjourney'
     lj_id = db.Column(db.Integer, primary_key=True)
     lj_name = db.Column(db.String(50), nullable=False)
-    jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
-    staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'), nullable=False)
-    ljcourses = db.relationship('LearningJourneyCourse', backref='learningjourney', lazy=True)
-    
-    
-    def __init__(self, lj_id, lj_name, jobrole_id, staff_id, ljcourses = list()):
+    jobrole_id = db.Column(db.Integer, db.ForeignKey(
+        'jobrole.jobrole_id'), nullable=False)
+    staff_id = db.Column(db.Integer, db.ForeignKey(
+        'staff.staff_id'), nullable=False)
+    ljcourses = db.relationship(
+        'LearningJourneyCourse', backref='learningjourney', lazy=True)
+
+    def __init__(self, lj_id, lj_name, jobrole_id, staff_id, ljcourses=list()):
         self.lj_id = lj_id
         self.lj_name = lj_name
         self.jobrole_id = jobrole_id
         self.staff_id = staff_id
         self.ljcourses = ljcourses
-        
-    
+
     def json(self):
         return {
             "lj_id": self.lj_id,
@@ -109,23 +135,26 @@ class LearningJourney(db.Model):
             "ljcourses": [ljcourse.json() for ljcourse in self.ljcourses],
         }
 
+
 class LearningJourneyCourse(db.Model):
     __tablename__ = 'learningjourneycourse'
     ljc_id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.String(20), db.ForeignKey('course.course_id'), nullable=False)
-    lj_id = db.Column(db.Integer, db.ForeignKey('learningjourney.lj_id'), nullable=False)
+    course_id = db.Column(db.String(20), db.ForeignKey(
+        'course.course_id'), nullable=False)
+    lj_id = db.Column(db.Integer, db.ForeignKey(
+        'learningjourney.lj_id'), nullable=False)
 
     def __init__(self, ljc_id, course_id, lj_id):
         self.ljc_id = ljc_id
         self.course_id = course_id
         self.lj_id = lj_id
-    
+
     def json(self):
         return {
-                "ljc_id": self.ljc_id,
-                "course_id": self.course_id,
-                "lj_id": self.lj_id
-            }
+            "ljc_id": self.ljc_id,
+            "course_id": self.course_id,
+            "lj_id": self.lj_id
+        }
 
 
 class Registration(db.Model):
@@ -137,7 +166,13 @@ class Registration(db.Model):
     course_id = db.Column(db.String(20), db.ForeignKey('course.course_id'))
     staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'))
 
-    def __init__(self,reg_id,reg_status,completion_status,course_id,staff_id):
+    def __init__(
+            self,
+            reg_id,
+            reg_status,
+            completion_status,
+            course_id,
+            staff_id):
         self.reg_id = reg_id
         self.reg_status = reg_status
         self.completion_status = completion_status
@@ -153,6 +188,7 @@ class Registration(db.Model):
             "staff_id": self.staff_id
         }
 
+
 class Role(db.Model):
     __tablename__ = 'role'
 
@@ -160,7 +196,7 @@ class Role(db.Model):
     role_name = db.Column(db.String(20), nullable=False)
     staffs = db.relationship('Staff', backref='Role', lazy=True)
 
-    def __init__(self,role_id,role_name,staffs = list()):
+    def __init__(self, role_id, role_name, staffs=list()):
         self.role_id = role_id
         self.role_name = role_name
         self.staffs = staffs
@@ -171,11 +207,14 @@ class Role(db.Model):
             "role_name": self.role_name
         }
 
+
 class CourseSkill(db.Model):
     __tablename__ = 'courseskill'
     csid = db.Column(db.Integer, primary_key=True)
-    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
-    course_id = db.Column(db.String(20), db.ForeignKey('course.course_id'), nullable=False)
+    skill_id = db.Column(db.Integer, db.ForeignKey(
+        'skill.skill_id'), nullable=False)
+    course_id = db.Column(db.String(20), db.ForeignKey(
+        'course.course_id'), nullable=False)
 
     def __init__(self, csid, skill_id, course_id):
         self.csid = csid
@@ -184,16 +223,19 @@ class CourseSkill(db.Model):
 
     def json(self):
         return {
-                "csid": self.csid,
-                "skill_id": self.skill_id,
-                "course_id": self.course_id
-            }
+            "csid": self.csid,
+            "skill_id": self.skill_id,
+            "course_id": self.course_id
+        }
+
 
 class RoleSkill(db.Model):
     __tablename__ = 'roleskill'
     rsid = db.Column(db.Integer, primary_key=True)
-    skill_id = db.Column(db.Integer, db.ForeignKey('skill.skill_id'), nullable=False)
-    jobrole_id = db.Column(db.Integer, db.ForeignKey('jobrole.jobrole_id'), nullable=False)
+    skill_id = db.Column(db.Integer, db.ForeignKey(
+        'skill.skill_id'), nullable=False)
+    jobrole_id = db.Column(db.Integer, db.ForeignKey(
+        'jobrole.jobrole_id'), nullable=False)
 
     def __init__(self, rsid, skill_id, jobrole_id):
         self.rsid = rsid
@@ -202,10 +244,11 @@ class RoleSkill(db.Model):
 
     def json(self):
         return {
-                "rsid": self.rsid,
-                "skill_id": self.skill_id,
-                "jobrole_id": self.jobrole_id
-            }
+            "rsid": self.rsid,
+            "skill_id": self.skill_id,
+            "jobrole_id": self.jobrole_id
+        }
+
 
 class Skill(db.Model):
     __tablename__ = 'skill'
@@ -216,7 +259,14 @@ class Skill(db.Model):
     courseskills = db.relationship('CourseSkill', backref='skill', lazy=True)
     isDeleted = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, skill_id, skill_name, skill_desc, roleskills = [], courseskills = [], isDeleted = False):
+    def __init__(
+            self,
+            skill_id,
+            skill_name,
+            skill_desc,
+            roleskills=[],
+            courseskills=[],
+            isDeleted=False):
         self.skill_id = skill_id
         self.skill_name = skill_name
         self.skill_desc = skill_desc
@@ -226,13 +276,15 @@ class Skill(db.Model):
 
     def json(self):
         return {
-                "skill_id": self.skill_id,
-                "skill_name": self.skill_name,
-                "skill_desc": self.skill_desc,
-                "roleskills": [roleskill.json() for roleskill in self.roleskills],
-                "courseskills": [courseskill.json() for courseskill in self.courseskills],
-                "isDeleted": self.isDeleted
-            }
+            "skill_id": self.skill_id,
+            "skill_name": self.skill_name,
+            "skill_desc": self.skill_desc,
+            "roleskills": [
+                roleskill.json() for roleskill in self.roleskills],
+            "courseskills": [
+                courseskill.json() for courseskill in self.courseskills],
+            "isDeleted": self.isDeleted}
+
 
 class Staff(db.Model):
     staff_id = db.Column(db.Integer, primary_key=True)
@@ -242,8 +294,16 @@ class Staff(db.Model):
     email = db.Column(db.String(50), nullable=False)
     role = db.Column(db.Integer, db.ForeignKey('role.role_id'))
     registrations = db.relationship('Registration', backref='Staff', lazy=True)
-    
-    def __init__(self,staff_id,staff_fname,staff_lname,dept,email,role,registrations = list()):
+
+    def __init__(
+            self,
+            staff_id,
+            staff_fname,
+            staff_lname,
+            dept,
+            email,
+            role,
+            registrations=list()):
         self.staff_id = staff_id
         self.staff_fname = staff_fname
         self.staff_lname = staff_lname
@@ -262,6 +322,7 @@ class Staff(db.Model):
             "role": self.role
         }
 
+
 if __name__ == '__main__':
     from backend_files.Course import course_retrieval
     from backend_files.staff import staff_retrieval
@@ -275,7 +336,16 @@ if __name__ == '__main__':
     from backend_files.learningjourney import learningjourney_manager
     from backend_files.learningjourney import learningjourney_course_linker
 
-
+    course_retrieval
+    staff_retrieval
+    role_retrieval
+    registration_retrieval
+    jobrole_manager
+    skill_manager
+    course_skill_linker
+    jobrole_skills_linker
+    learningjourney_manager
+    learningjourney_course_linker
 
 
 @app.route('/')
@@ -293,7 +363,6 @@ def home():
     <a href='/learningjourney'>get learningjourneys</a>
     <a href='/learningjourneycourse'>get learningjourneycourse</a>
     """
-
 
 
 if __name__ == '__main__':

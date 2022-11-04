@@ -1,18 +1,18 @@
-from __main__ import app, db, Role
+from __main__ import app, db
+from api_app import Role
 
 
 from flask import jsonify, request
 from sqlalchemy import func
 
 
-
-#add role
+# add role
 @app.route('/role', methods=['POST'])
 def add_role():
     data = request.get_json()
     role = Role(**data)
     role_name = data['role_name'].lower()
-    if (Role.query.filter(func.lower(Role.role_name)== role_name).first()):
+    if (Role.query.filter(func.lower(Role.role_name) == role_name).first()):
         return jsonify(
             {
                 "code": 400,
@@ -22,7 +22,7 @@ def add_role():
     try:
         db.session.add(role)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,
@@ -39,8 +39,6 @@ def add_role():
             "data": role.json()
         }
     ), 201
-
-
 
 
 @app.route('/role')
@@ -63,6 +61,7 @@ def role():
             "message": "There are no roles."
         }
     ), 404
+
 
 @app.route('/role/<int:role_id>')
 def find_role(role_id):

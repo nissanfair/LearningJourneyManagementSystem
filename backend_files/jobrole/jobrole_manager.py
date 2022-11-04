@@ -1,8 +1,8 @@
-from __main__ import app, db, JobRole, Skill
+from __main__ import app, db
+from api_app import JobRole, Skill
 
 from flask import jsonify, request
 from sqlalchemy import func
-
 
 
 @app.route('/jobrole/<int:jobrole_id>', methods=['PUT'])
@@ -17,7 +17,8 @@ def update_jobrole(jobrole_id):
         jobrole.jobrole_name = "temp"
         db.session.commit()
 
-        if (JobRole.query.filter(func.lower(JobRole.jobrole_name)== jobrole_name).first()):
+        if (JobRole.query.filter(func.lower(
+                JobRole.jobrole_name) == jobrole_name).first()):
             jobrole.jobrole_name = original_name
             db.session.commit()
             return jsonify(
@@ -30,7 +31,7 @@ def update_jobrole(jobrole_id):
             jobrole.jobrole_name = data['jobrole_name']
             jobrole.jobrole_desc = data['jobrole_desc']
             db.session.commit()
-        except:
+        except BaseException:
             return jsonify(
                 {
                     "code": 500,
@@ -54,9 +55,10 @@ def update_jobrole(jobrole_id):
         }
     ), 404
 
+
 @app.route('/jobrole')
 def getjobrole():
-    #get all non soft deleted job roles
+    # get all non soft deleted job roles
     jobroles = JobRole.query.filter_by(isDeleted=False).all()
 
     if len(jobroles):
@@ -76,6 +78,7 @@ def getjobrole():
         }
     ), 404
 
+
 @app.route('/jobrole/<int:jobrole_id>')
 def getjobrolebyid(jobrole_id):
     jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
@@ -84,7 +87,6 @@ def getjobrolebyid(jobrole_id):
         jobrolejson = jobrole.json()
 
         linked_skills = []
-        
 
         # iterate through roleskills in jobrole
         for roleskill in jobrole.roleskills:
@@ -94,7 +96,6 @@ def getjobrolebyid(jobrole_id):
             linked_skills.append(skill.json())
 
         jobrolejson['linked_skills'] = linked_skills
-            
 
         return jsonify(
             {
@@ -110,6 +111,7 @@ def getjobrolebyid(jobrole_id):
         }
     ), 404
 
+
 @app.route('/jobrole/<int:jobrole_id>/softdelete')
 def soft_delete_jobrole(jobrole_id):
     jobrole = JobRole.query.filter_by(jobrole_id=jobrole_id).first()
@@ -118,7 +120,7 @@ def soft_delete_jobrole(jobrole_id):
             jobrole.isDeleted = True
         else:
             jobrole.isDeleted = False
-            
+
         db.session.commit()
         return jsonify(
             {
@@ -132,6 +134,7 @@ def soft_delete_jobrole(jobrole_id):
             "message": "JobRole not found."
         }
     ), 404
+
 
 @app.route('/jobrole/softdeleted')
 def getsoftdeletedjobroles():
@@ -154,12 +157,14 @@ def getsoftdeletedjobroles():
         }
     ), 404
 
-#add job role
+# add job role
+
+
 @app.route('/jobrole', methods=['POST'])
 def add_jobrole():
     data = request.get_json()
-    jobrole = JobRole(**data, jobrole_id = JobRole.query.count() + 1)
-    #check if jobrole already exists
+    jobrole = JobRole(**data, jobrole_id=JobRole.query.count() + 1)
+    # check if jobrole already exists
     if JobRole.query.filter_by(jobrole_name=jobrole.jobrole_name).first():
         return jsonify(
             {
@@ -170,7 +175,7 @@ def add_jobrole():
     try:
         db.session.add(jobrole)
         db.session.commit()
-    except:
+    except BaseException:
         return jsonify(
             {
                 "code": 500,
@@ -184,4 +189,3 @@ def add_jobrole():
             "data": jobrole.json()
         }
     ), 201
-

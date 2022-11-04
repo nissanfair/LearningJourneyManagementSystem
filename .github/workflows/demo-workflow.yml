@@ -5,7 +5,10 @@ name: ljms CI Workflow
 #that is every time someone pushes a change to the repository or merges a pull request. 
 #This is triggered by a push to every branch; for examples of syntax that runs only on 
 #pushes to specific branches, paths, or tags, see "Workflow syntax for GitHub Actions."
-on: [push]
+on: 
+  push:
+    branches:
+      - main
 
 #Groups together all the jobs that run in the Demo Workflow workflow.
 jobs:
@@ -17,6 +20,18 @@ jobs:
     #Groups together all the steps that run in the check-bats-version job. 
     #Each item nested under this section is a separate action or shell script.
     steps:
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: -771120748
+          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          message: |
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            
+            Repository: ${{ github.repository }}
+            
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
       #The uses keyword specifies that this step will run v3 of the actions/checkout action. 
       #This is an action that checks out your repository onto the runner, 
       #allowing you to run scripts or other actions against your code (such as build and test tools). 
@@ -49,8 +64,9 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with unittest
+      - name: Test-driven development(TDD) with unit testing and integration tests
         #runs the unittest
         run: |
           #Add the command to run all the unittest here.
           python unit_tests.py
+          python integration_tests.py

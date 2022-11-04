@@ -1,23 +1,14 @@
-from __main__ import app, db, Skill, Course, JobRole, Staff, LearningJourneyCourse, LearningJourney
-from flask import jsonify, request
-from sqlalchemy import func
+from api_app import Skill, Course, JobRole
+from api_app import LearningJourneyCourse, LearningJourney
 
-
-
-#get learning journey
+# get learning journey
 @app.route('/learningjourney')
 def learningjourney():
     learningjourneys = LearningJourney.query.all()
 
     if len(learningjourneys):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "learningjourneys": [learningjourney.json() for learningjourney in learningjourneys]
-                }
-            }
-        )
+        return jsonify({"code": 200, "data": {"learningjourneys": [
+            learningjourney.json() for learningjourney in learningjourneys]}})
 
     return jsonify(
         {
@@ -25,6 +16,7 @@ def learningjourney():
             "message": "There are no learningjourneys."
         }
     ), 404
+
 
 # add learning journey
 @app.route('/learningjourney', methods=['POST'])
@@ -79,11 +71,10 @@ def learningjourneyuser(staff_id):
 
     # learningjourneys = LearningJourney.query.all()
 
-    
     # print(LearningJourney['staff_id'])
 
-    listoflj = LearningJourney.query.filter_by(staff_id = staff_id)
-    staff = Staff.query.filter_by(staff_id = staff_id).first()
+    listoflj = LearningJourney.query.filter_by(staff_id=staff_id)
+
     if listoflj:
         learningjourneysjson = []
 
@@ -91,44 +82,47 @@ def learningjourneyuser(staff_id):
         for learningjourneyobject in listoflj:
             learningjourneysjson.append(learningjourneyobject.json())
 
-            linked_jobrole = JobRole.query.filter_by(jobrole_id = learningjourneyobject.jobrole_id).first()
+            linked_jobrole = JobRole.query.filter_by(
+                jobrole_id=learningjourneyobject.jobrole_id).first()
             linked_courses = []
 
-            learningjourney = LearningJourney.query.filter_by(lj_id = learningjourneyobject.lj_id).first()
+            learningjourney = LearningJourney.query.filter_by(
+                lj_id=learningjourneyobject.lj_id).first()
             # iterate through ljcourses
 
-            ljcourses = LearningJourneyCourse.query.filter_by(lj_id = learningjourney.lj_id)
+            ljcourses = LearningJourneyCourse.query.filter_by(
+                lj_id=learningjourney.lj_id)
             for ljcourseobject in ljcourses:
-                course = Course.query.filter_by(course_id = ljcourseobject.course_id).first()
+                course = Course.query.filter_by(
+                    course_id=ljcourseobject.course_id).first()
                 linked_courses.append(course.json())
 
             linked_skills = []
             for roleskillobject in linked_jobrole.roleskills:
-                skill = Skill.query.filter_by(skill_id = roleskillobject.skill_id).first()
+                skill = Skill.query.filter_by(
+                    skill_id=roleskillobject.skill_id).first()
                 linked_skills.append(skill.json())
-
 
             learningjourneysjson[-1]['linked_jobrole'] = linked_jobrole.json()
             learningjourneysjson[-1]['linked_jobrole']['linked_skills'] = linked_skills
             learningjourneysjson[-1]['linked_courses'] = linked_courses
-                
 
         return jsonify(
             {
-                "code":200,
-                "data":{
+                "code": 200,
+                "data": {
                     "learningjourneys": learningjourneysjson
                 }
             }
         )
     return jsonify(
-    {
-        "code": 404,
-        "message": "There are no learningjourneys."
-    }
-), 404
+        {
+            "code": 404,
+            "message": "There are no learningjourneys."
+        }
+    ), 404
     # print(listoflj)
-    
+
     # print("hi")
 
     # if len(learningjourneys):
@@ -149,6 +143,8 @@ def learningjourneyuser(staff_id):
     # ), 404
 
 # delete learning journey
+
+
 @app.route('/learningjourney/<int:lj_id>', methods=['DELETE'])
 def delete_learningjourney(lj_id):
     learningjourney = LearningJourney.query.filter_by(lj_id=lj_id).first()
@@ -160,7 +156,7 @@ def delete_learningjourney(lj_id):
 
             db.session.delete(learningjourney)
             db.session.commit()
-        except:
+        except BaseException:
             return jsonify(
                 {
                     "code": 500,

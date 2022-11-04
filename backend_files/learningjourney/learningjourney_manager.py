@@ -1,5 +1,8 @@
+from __main__ import app, db
 from api_app import Skill, Course, JobRole
 from api_app import LearningJourneyCourse, LearningJourney
+from flask import jsonify
+
 
 # get learning journey
 @app.route('/learningjourney')
@@ -17,54 +20,6 @@ def learningjourney():
         }
     ), 404
 
-
-# add learning journey
-@app.route('/learningjourney', methods=['POST'])
-def add_learningjourney():
-    data = request.get_json()
-
-    courses = data["courses"]
-    staff_id = data["staff_id"]
-    jobrole_id = data["jobrole_id"]
-    lj_name = data["lj_name"]
-
-    learningjourney = LearningJourney(lj_name=lj_name,staff_id=staff_id,jobrole_id=jobrole_id, lj_id = LearningJourney.query.filter(LearningJourney.lj_id != None).order_by(LearningJourney.lj_id).all()[-1].lj_id + 1)
-
-    if (LearningJourney.query.filter(func.lower(LearningJourney.lj_name)== lj_name).first()):
-            return jsonify(
-                {
-                    "code": 400,
-                    "message": "A Learning Journey with the same name already exists."
-                }
-            ), 400
-
-
-    try:
-        db.session.add(learningjourney)
-        db.session.commit()
-
-        lj_id = learningjourney.lj_id
-        for course_id in courses:
-            print(course_id)
-            ljc_id = LearningJourneyCourse.query.filter(LearningJourneyCourse.ljc_id != None).order_by(LearningJourneyCourse.ljc_id).all()[-1].ljc_id + 1
-            lj_course = LearningJourneyCourse(lj_id=lj_id, course_id=course_id, ljc_id=ljc_id)
-            db.session.add(lj_course)
-            db.session.commit()
-
-    except:
-        return jsonify(
-            {
-                "code": 500,
-                "message": "An error occurred creating the learningjourney."
-            }
-        ), 500
-
-    return jsonify(
-        {
-            "code": 201,
-            "data": learningjourney.json()
-        }
-    ), 201
 
 @app.route('/staff/learningjourney/<int:staff_id>')
 def learningjourneyuser(staff_id):

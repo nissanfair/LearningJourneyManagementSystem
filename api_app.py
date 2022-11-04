@@ -1020,11 +1020,10 @@ def update_roleskill_forrole(jobrole_id):
         for rs in roleskill:
             db.session.delete(rs)
 
-# ----------------------------------WEIRD???----------------------------------------------------------------------------
         unique_jobrole_id = []
         # add new roleskills for skill
         for roleskillobject in data['roleskills']:
-            skill_id = roleskillobject['jobrole_id']
+            skill_id = roleskillobject['skill_id']
             if skill_id not in unique_jobrole_id:
                 unique_jobrole_id.append(skill_id)
             else:
@@ -1094,7 +1093,14 @@ def add_courseskill():
 
 
     data = request.get_json()
-    courseskill = CourseSkill(**data, csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1)
+    csid = 1
+
+    try:
+        csid = CourseSkill.query.filter(CourseSkill.csid != None).order_by(CourseSkill.csid).all()[-1].csid + 1
+    except: 
+        pass
+
+    courseskill = CourseSkill(**data, csid = csid)
 
     #check if courseskill with same skill and course already exists
     if CourseSkill.query.filter_by(skill_id=courseskill.skill_id, course_id=courseskill.course_id).first():

@@ -29,6 +29,12 @@ const app1 = Vue.createApp({
       course_id: "",
       course_names: [],
       job_roles: [], //This will hold the selection of job roles
+      jobroleselection: "", // this will hold the job role selection from the dropdown list
+      linked_skills_list: [], //this will hold the skills linked to the selected job role
+      courses_list: [], //this will hold the courses that can help clear a particular skill
+      selected_skill_id: "", //this will hold the currently selected skill id 
+      skill_courses_list : [],
+      skill_id:""
     };
   },
   methods: {
@@ -83,8 +89,9 @@ const app1 = Vue.createApp({
       });
     },
     cancel() {
-      this.jobrole_name = "";
-      this.jobrole_desc = "";
+      this.jobroleselection = "";
+      this.linked_skills_list= [];
+      this.courses_list = []
     },
 
     create() {
@@ -151,21 +158,142 @@ const app1 = Vue.createApp({
 
     //this is called when we click add learning journey
     retrieve() {
-      url = "http://localhost:5000/jobrole"
+      url = "http://localhost:5000/jobrole";
       axios
         .get(url)
-        .then((response) =>{
+        .then((response) => {
           // handle success
           console.log(response.data.data.jobroles);
-          this.job_roles = response.data.data.jobroles
-          console.log(this.job_roles)
-
+          this.job_roles = response.data.data.jobroles;
+          console.log(this.job_roles);
         })
         .catch(function (error) {
           // handle error
           console.log(error);
         });
-    }
+    },
+    obtain() {
+      //here we will try and populate the skills needed for the selected job role
+      if (this.jobroleselection != "") {
+        url = "http://localhost:5000/jobrole/" + this.jobroleselection;
+        axios
+          .get(url)
+          .then((response) => {
+            // handle success
+            console.log(response.data.data);
+            console.log(response.data.data.linked_skills);
+            this.linked_skills_list = response.data.data.linked_skills;
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+    },
+    populate(id){// here we will populate the table to show the courses to clear a particular selected skill
+      this.selected_skill_id = id
+      url = "http://localhost:5000/skill/" + id
+      axios
+          .get(url)
+          .then((response) => {
+            // handle success
+            console.log(response.data.data);
+            console.log(response.data.data.linked_courses)
+            this.courses_list = response.data.data.linked_courses
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+
+    },
+    save(cid,cname){//here we will save the user selection 
+      //first grab the current skillid
+      let skillid = this.selected_skill_id
+
+      let course_skill = {skillID:skillid, courseName:cname, courseID:cid};
+      let x = true;
+      for(let i = 0; i<this.skill_courses_list.length; i++){
+        if(this.skill_courses_list[i].courseID == cid){
+          x = false;
+        }
+      }
+      if (x == true){
+        this.skill_courses_list.push(course_skill);
+      }
+    },
+    remove(index){
+      this.skill_courses_list.splice(index, 1)
+    },
+    createlj(){
+
+      
+      if(this.skill_courses_list.length == 0 || this.lj_name.length == 0){
+        Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "The Learning Journey name and your course selections must be filled up!",
+            });
+      }else{
+        console.log(this.lj_name)
+        let course_list = [];
+        for(let courseobject of this.skill_courses_list) {
+          console.log(courseobject);
+          course_list.push(courseobject["courseID"]);
+        }
+        url = "http://localhost:5000/learningjourney"
+
+        var postObject = {
+          staff_id: parseInt(staff_id),
+          lj_name: this.lj_name,
+          jobrole_id:this.jobroleselection,
+          courses : course_list
+          }
+
+        axios
+          .post(url, postObject)
+            .then((response) => {
+              console.log("create response:" + response.data.code);
+              stat = response.data.code;
+              if (stat) {
+                Swal.fire({
+                  title: "Created!",
+                  text: "New Learning Journey has been created.",
+                  icon: "success",
+                  allowOutsideClick: false,
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    this.disabled = false;
+                    //refresh the current page
+                    location.reload();
+                  }
+                });
+              }
+            })
+            .catch((error) => {
+              // process error object
+              this.disabled = false;
+              console.log(error.response.status);
+    
+                //When jobrole already exists
+              if (error.response.status) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "A Learning Journey with the same name already Exists!",
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Oops Something Went Wrong!",
+                });
+              }
+            });
+
+      }
+  }
+    
   },
   created() {
     this.current_staff_id = staff_id;

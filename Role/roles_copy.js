@@ -199,7 +199,7 @@ const app1 = Vue.createApp({
       rsUrl = "http://localhost:5000/jobrole/" + this.cJobRoleID + "/roleskills";
       let selection = [];
       for (let index = 0; index < this.jobroleSkills.length; index++) {
-        selection.push({ jobrole_id: this.jobroleSkills[index].split("-")[0] });
+        selection.push({ skill_id: this.jobroleSkills[index].split("-")[0] });
       }
       console.log(selection);
 

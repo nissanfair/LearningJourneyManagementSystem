@@ -1239,6 +1239,33 @@ def learningjourney():
         }
     ), 404
 
+# get learning journey by id
+@app.route('/learningjourney/<int:learningjourney_id>')
+def get_learningjourney(learningjourney_id):
+    learningjourney = LearningJourney.query.filter_by(
+        lj_id = learningjourney_id).first()
+
+    learningjourneyjson = learningjourney.json()
+    linked_jobrole = JobRole.query.filter_by(jobrole_id=learningjourneyjson['jobrole_id']).first()
+    linked_courses = []
+    for lj_course in learningjourneyjson['ljcourses']:
+        linked_courses.append(Course.query.filter_by(course_id=lj_course['course_id']).first())
+    learningjourneyjson["linked_jobrole"] = linked_jobrole.json()
+    learningjourneyjson["linked_courses"] = [course.json() for course in linked_courses]
+
+    if learningjourney:
+        return jsonify(
+            {
+                "code": 200,
+                "data": learningjourneyjson
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "LearningJourney not found."
+        }
+    ), 404
 
 @app.route('/staff/learningjourney/<int:staff_id>')
 def learningjourneyuser(staff_id):
@@ -1327,14 +1354,24 @@ def add_learningjourney():
     jobrole_id = data["jobrole_id"]
     lj_name = data["lj_name"]
 
+    try:
+        lj_id = LearningJourney.query.filter(
+            LearningJourney.lj_id is not None).order_by(
+            LearningJourney.lj_id).all()[
+                -1].lj_id + 1
+    except:
+        lj_id = 1
+
+    try:
+        lj_id = data["lj_id"]
+    except:
+        pass
+
     learningjourney = LearningJourney(
         lj_name=lj_name,
         staff_id=staff_id,
         jobrole_id=jobrole_id,
-        lj_id=LearningJourney.query.filter(
-            LearningJourney.lj_id is not None).order_by(
-            LearningJourney.lj_id).all()[
-                -1].lj_id + 1)
+        lj_id=lj_id)
 
     if (LearningJourney.query.filter(func.lower(
             LearningJourney.lj_name) == lj_name).first()):

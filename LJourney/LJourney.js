@@ -88,6 +88,7 @@ const app1 = Vue.createApp({
         }
       });
     },
+
     cancel() {
       this.jobroleselection = "";
       this.linked_skills_list= [];
@@ -95,6 +96,7 @@ const app1 = Vue.createApp({
     },
 
     create() {
+
       this.disabled = true;
 
       //Axios post
@@ -158,6 +160,20 @@ const app1 = Vue.createApp({
 
     //this is called when we click add learning journey
     retrieve() {
+      document.getElementById("submitbtn").onclick = () => {
+        this.createlj();
+      }
+
+      this.jobroleselection = "";
+      this.job_roles = null;
+      this.lj_name = "";
+      this.skill_courses_list = [];
+
+      document.getElementById("jobroleselector").disabled = false;
+      document.getElementById("staticBackdropLabel").innerHTML = "Create Learning Journey";
+      document.getElementById("submitbtn").innerHTML = "Create";
+
+
       url = "http://localhost:5000/jobrole";
       axios
         .get(url)
@@ -171,6 +187,102 @@ const app1 = Vue.createApp({
           // handle error
           console.log(error);
         });
+    },
+    upd(id) {
+      console.log(id);
+      console.log("test update");
+      this.retrieve();
+
+      //Axios get
+      let url = "http://localhost:5000/learningjourney/" + id;
+      axios
+        .get(url)
+        .then((response) => {
+          let learningjourneyobject = response.data.data;
+          console.log(learningjourneyobject);
+          this.jobroleselection = learningjourneyobject.jobrole_id;
+          this.job_roles = [learningjourneyobject.linked_jobrole];
+          this.lj_name = learningjourneyobject.lj_name;
+
+          document.getElementById("jobroleselector").disabled = true;
+          document.getElementById("staticBackdropLabel").innerHTML = "Update Learning Journey";
+          document.getElementById("submitbtn").innerHTML = "Update";
+          document.getElementById("submitbtn").onclick = () => {
+            let url = "http://localhost:5000/learningjourney/" + id;
+
+            axios.delete(url).then((response) => {
+              console.log(response.data);
+              console.log(this.lj_name)
+              let course_list = [];
+              for(let courseobject of this.skill_courses_list) {
+                console.log(courseobject);
+                course_list.push(courseobject["courseID"]);
+              }
+              url = "http://localhost:5000/learningjourney"
+
+              var postObject = {
+                staff_id: parseInt(staff_id),
+                lj_name: this.lj_name,
+                jobrole_id:this.jobroleselection,
+                lj_id: id,
+                courses : course_list
+              }
+
+              axios
+                .post(url, postObject)
+                  .then((response) => {
+                    console.log("create response:" + response.data.code);
+                    stat = response.data.code;
+                    if (stat) {
+                      Swal.fire({
+                        title: "Updated!",
+                        text: "Learning Journey has been updated.",
+                        icon: "success",
+                        allowOutsideClick: false,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          this.disabled = false;
+                          //refresh the current page
+                          location.reload();
+                        }
+                      });
+                    }
+                  });
+                  
+              
+            });
+          }
+          let newskill_course_list = [];
+          for (let courseobject of learningjourneyobject.linked_courses) {
+            console.log(courseobject);
+            let newcourseobject = {"courseName": courseobject.course_name, "courseID": courseobject.course_id};
+            newskill_course_list.push(newcourseobject);
+          }
+          this.skill_courses_list = newskill_course_list;
+          this.obtain();
+
+          
+
+        //   {
+        //     "jobrole_id": 1,
+        //     "lj_id": 1,
+        //     "lj_name": "LJ to be swe",
+        //     "ljcourses": [
+        //         {
+        //             "course_id": "IS111",
+        //             "lj_id": 1,
+        //             "ljc_id": 1
+        //         }
+        //     ],
+        //     "staff_id": 1
+        // }
+
+        });
+
+
+        
+      
+      
     },
     obtain() {
       //here we will try and populate the skills needed for the selected job role
@@ -328,5 +440,7 @@ const app1 = Vue.createApp({
       });
   },
 });
+
+
 // (2) Link (mount) Vue instance to DOM
 const vm = app1.mount("#app");

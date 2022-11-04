@@ -104,6 +104,9 @@
                   </li>
                   <!-- button to delete learningjourney -->
                   <button type="button" class="btn btn-danger" @click="del(lj.lj_id)">Delete Learning Journey</button>
+                  <!-- button to update learningjourney-->
+                  <a class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#staticCreateBackdrop"
+                  @click="upd(lj.lj_id)">Update Learning Journey</a>
                   <!-- <li>
                       Progress: 33.33%
                       <div class="progress">
@@ -162,7 +165,7 @@
             <div class="mb-3">
               <label for="form-select" class="form-label">Select Job Role</label>
 
-              <select class="form-select" v-model="jobroleselection" v-on:change="obtain" aria-label="Default select example">
+              <select id="jobroleselector" class="form-select" v-model="jobroleselection" v-on:change="obtain" aria-label="Default select example">
                 <option value="">Please select</option>
                 <option v-for="role in job_roles" v-bind:value="role.jobrole_id">{{role.jobrole_name}}</option>
               </select>
@@ -223,7 +226,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" @click="cancel">Cancel</button>
-            <button type="button" class="btn btn-primary btn-primary" @click="createlj">Create</button>
+            <button id="submitbtn" type="button" class="btn btn-primary btn-primary">Create</button>
           </div>
         </div>
       </div>

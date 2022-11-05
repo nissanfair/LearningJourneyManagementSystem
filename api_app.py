@@ -1343,6 +1343,25 @@ def learningjourneyuser(staff_id):
     #     }
     # ), 404
 
+# get learning journey by name
+@app.route('/learningjourney/name/<string:lj_name>')
+def get_learningjourney_name(lj_name):
+    learningjourney = LearningJourney.query.filter(func.lower(
+            LearningJourney.lj_name) == lj_name).first()
+
+    if learningjourney:
+        return jsonify(
+            {
+                "code": 200,
+                "data": learningjourney.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 444,
+            "message": "LearningJourney not found."
+        }
+    ), 404
 
 # add learning journey
 @app.route('/learningjourney', methods=['POST'])

@@ -33,8 +33,8 @@ const app1 = Vue.createApp({
       linked_skills_list: [], //this will hold the skills linked to the selected job role
       courses_list: [], //this will hold the courses that can help clear a particular skill
       selected_skill_id: "", //this will hold the currently selected skill id 
-      skill_courses_list : [],
-      skill_id:""
+      skill_courses_list: [],
+      skill_id: ""
     };
   },
   methods: {
@@ -91,7 +91,7 @@ const app1 = Vue.createApp({
 
     cancel() {
       this.jobroleselection = "";
-      this.linked_skills_list= [];
+      this.linked_skills_list = [];
       this.courses_list = []
     },
 
@@ -189,17 +189,36 @@ const app1 = Vue.createApp({
         });
     },
     upd(id) {
+      // popup please wait
+      Swal.fire({
+        title: "Please Wait",
+        text: "Loading Learning Journey Details",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
       console.log(id);
       console.log("test update");
       this.retrieve();
 
       //Axios get
       let url = "http://localhost:5000/learningjourney/" + id;
+      
+  
       axios
         .get(url)
         .then((response) => {
+          
+
           let learningjourneyobject = response.data.data;
           console.log(learningjourneyobject);
+
+          axios.get(`http://localhost:5000/jobrole/${learningjourneyobject.linked_jobrole.jobrole_id}`)
+          .then((response) => {
+            console.log(response.data.data);
+          });
+
           this.jobroleselection = learningjourneyobject.jobrole_id;
           this.job_roles = [learningjourneyobject.linked_jobrole];
           this.lj_name = learningjourneyobject.lj_name;
@@ -207,82 +226,107 @@ const app1 = Vue.createApp({
           document.getElementById("jobroleselector").disabled = true;
           document.getElementById("staticBackdropLabel").innerHTML = "Update Learning Journey";
           document.getElementById("submitbtn").innerHTML = "Update";
+
+          // close popup
+          Swal.close();
+
           document.getElementById("submitbtn").onclick = () => {
-            let url = "http://localhost:5000/learningjourney/" + id;
+            if (this.skill_courses_list.length == 0 || this.lj_name.length == 0) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "The Learning Journey name and your course selections must be filled up!",
+              });
+            } else {
+              let url = "http://localhost:5000/learningjourney/" + id;
 
-            axios.delete(url).then((response) => {
-              console.log(response.data);
-              console.log(this.lj_name)
-              let course_list = [];
-              for(let courseobject of this.skill_courses_list) {
-                console.log(courseobject);
-                course_list.push(courseobject["courseID"]);
-              }
-              url = "http://localhost:5000/learningjourney"
+              axios.get(`http://localhost:5000/learningjourney/name/${this.lj_name}`)
+                .then((response) => {
+                  // if code is 444, then the learning journey name is not taken
+                  if (response.data.code == 444) {
+                    axios.delete(url).then((response) => {
+                      console.log(response.data);
+                      console.log(this.lj_name)
+                      let course_list = [];
+                      for (let courseobject of this.skill_courses_list) {
+                        console.log(courseobject);
+                        course_list.push(courseobject["courseID"]);
+                      }
+                      url = "http://localhost:5000/learningjourney"
 
-              var postObject = {
-                staff_id: parseInt(staff_id),
-                lj_name: this.lj_name,
-                jobrole_id:this.jobroleselection,
-                lj_id: id,
-                courses : course_list
-              }
+                      var postObject = {
+                        staff_id: parseInt(staff_id),
+                        lj_name: this.lj_name,
+                        jobrole_id: this.jobroleselection,
+                        lj_id: id,
+                        courses: course_list
+                      }
 
-              axios
-                .post(url, postObject)
-                  .then((response) => {
-                    console.log("create response:" + response.data.code);
-                    stat = response.data.code;
-                    if (stat) {
-                      Swal.fire({
-                        title: "Updated!",
-                        text: "Learning Journey has been updated.",
-                        icon: "success",
-                        allowOutsideClick: false,
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          this.disabled = false;
-                          //refresh the current page
-                          location.reload();
-                        }
-                      });
-                    }
-                  });
-                  
-              
-            });
+                      axios
+                        .post(url, postObject)
+                        .then((response) => {
+                          console.log("create response:" + response.data.code);
+                          stat = response.data.code;
+                          if (stat) {
+                            Swal.fire({
+                              title: "Updated!",
+                              text: "Learning Journey has been updated.",
+                              icon: "success",
+                              allowOutsideClick: false,
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                this.disabled = false;
+                                //refresh the current page
+                                location.reload();
+                              }
+                            });
+                          }
+                        });
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Oops...",
+                      text: "A Learning Journey with the same name already Exists!",
+                    });
+                  }
+                });
+            }
+
+
+
           }
           let newskill_course_list = [];
           for (let courseobject of learningjourneyobject.linked_courses) {
             console.log(courseobject);
-            let newcourseobject = {"courseName": courseobject.course_name, "courseID": courseobject.course_id};
+            let newcourseobject = { "courseName": courseobject.course_name, "courseID": courseobject.course_id };
             newskill_course_list.push(newcourseobject);
           }
           this.skill_courses_list = newskill_course_list;
           this.obtain();
 
-          
 
-        //   {
-        //     "jobrole_id": 1,
-        //     "lj_id": 1,
-        //     "lj_name": "LJ to be swe",
-        //     "ljcourses": [
-        //         {
-        //             "course_id": "IS111",
-        //             "lj_id": 1,
-        //             "ljc_id": 1
-        //         }
-        //     ],
-        //     "staff_id": 1
-        // }
+
+          //   {
+          //     "jobrole_id": 1,
+          //     "lj_id": 1,
+          //     "lj_name": "LJ to be swe",
+          //     "ljcourses": [
+          //         {
+          //             "course_id": "IS111",
+          //             "lj_id": 1,
+          //             "ljc_id": 1
+          //         }
+          //     ],
+          //     "staff_id": 1
+          // }
 
         });
 
 
-        
-      
-      
+
+
+
     },
     obtain() {
       //here we will try and populate the skills needed for the selected job role
@@ -299,57 +343,58 @@ const app1 = Vue.createApp({
           .catch(function (error) {
             // handle error
             console.log(error);
+            this.linked_skills_list = [];
           });
       }
     },
-    populate(id){// here we will populate the table to show the courses to clear a particular selected skill
+    populate(id) {// here we will populate the table to show the courses to clear a particular selected skill
       this.selected_skill_id = id
       url = "http://localhost:5000/skill/" + id
       axios
-          .get(url)
-          .then((response) => {
-            // handle success
-            console.log(response.data.data);
-            console.log(response.data.data.linked_courses)
-            this.courses_list = response.data.data.linked_courses
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          });
+        .get(url)
+        .then((response) => {
+          // handle success
+          console.log(response.data.data);
+          console.log(response.data.data.linked_courses)
+          this.courses_list = response.data.data.linked_courses
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        });
 
     },
-    save(cid,cname){//here we will save the user selection 
+    save(cid, cname) {//here we will save the user selection 
       //first grab the current skillid
       let skillid = this.selected_skill_id
 
-      let course_skill = {skillID:skillid, courseName:cname, courseID:cid};
+      let course_skill = { skillID: skillid, courseName: cname, courseID: cid };
       let x = true;
-      for(let i = 0; i<this.skill_courses_list.length; i++){
-        if(this.skill_courses_list[i].courseID == cid){
+      for (let i = 0; i < this.skill_courses_list.length; i++) {
+        if (this.skill_courses_list[i].courseID == cid) {
           x = false;
         }
       }
-      if (x == true){
+      if (x == true) {
         this.skill_courses_list.push(course_skill);
       }
     },
-    remove(index){
+    remove(index) {
       this.skill_courses_list.splice(index, 1)
     },
-    createlj(){
+    createlj() {
 
-      
-      if(this.skill_courses_list.length == 0 || this.lj_name.length == 0){
+
+      if (this.skill_courses_list.length == 0 || this.lj_name.length == 0) {
         Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "The Learning Journey name and your course selections must be filled up!",
-            });
-      }else{
+          icon: "error",
+          title: "Oops...",
+          text: "The Learning Journey name and your course selections must be filled up!",
+        });
+      } else {
         console.log(this.lj_name)
         let course_list = [];
-        for(let courseobject of this.skill_courses_list) {
+        for (let courseobject of this.skill_courses_list) {
           console.log(courseobject);
           course_list.push(courseobject["courseID"]);
         }
@@ -358,56 +403,65 @@ const app1 = Vue.createApp({
         var postObject = {
           staff_id: parseInt(staff_id),
           lj_name: this.lj_name,
-          jobrole_id:this.jobroleselection,
-          courses : course_list
-          }
+          jobrole_id: this.jobroleselection,
+          courses: course_list
+        }
 
         axios
           .post(url, postObject)
-            .then((response) => {
-              console.log("create response:" + response.data.code);
-              stat = response.data.code;
-              if (stat) {
-                Swal.fire({
-                  title: "Created!",
-                  text: "New Learning Journey has been created.",
-                  icon: "success",
-                  allowOutsideClick: false,
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    this.disabled = false;
-                    //refresh the current page
-                    location.reload();
-                  }
-                });
-              }
-            })
-            .catch((error) => {
-              // process error object
-              this.disabled = false;
-              console.log(error.response.status);
-    
-                //When jobrole already exists
-              if (error.response.status) {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "A Learning Journey with the same name already Exists!",
-                });
-              } else {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Oops Something Went Wrong!",
-                });
-              }
-            });
+          .then((response) => {
+            console.log("create response:" + response.data.code);
+            stat = response.data.code;
+            if (stat) {
+              Swal.fire({
+                title: "Created!",
+                text: "New Learning Journey has been created.",
+                icon: "success",
+                allowOutsideClick: false,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.disabled = false;
+                  //refresh the current page
+                  location.reload();
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            // process error object
+            this.disabled = false;
+            console.log(error.response.status);
+
+            //When jobrole already exists
+            if (error.response.status) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "A Learning Journey with the same name already Exists!",
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Oops Something Went Wrong!",
+              });
+            }
+          });
 
       }
-  }
-    
+    }
+
   },
   created() {
+    // popup please wait
+    Swal.fire({
+      title: "Please Wait",
+      text: "Loading Learning Journey Details",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     this.current_staff_id = staff_id;
     // lets get all the staffs! for the selecting staff_id dropdown :)
     axios.get("http://localhost:5000/staff").then((response) => {
@@ -427,6 +481,9 @@ const app1 = Vue.createApp({
           console.log(this.learningjourneys);
           this.lj_name = response.data.data.lj_name;
           this.lj_id = response.data.data.lj_id;
+          // close swal loading popup
+          Swal.close();
+          
         }
       })
       .catch((error) => {
@@ -434,6 +491,7 @@ const app1 = Vue.createApp({
         console.log(error.response.status);
         //When jobroles database is empty
         if (error.response.status == 404) {
+          Swal.close();
           this.message =
             "<p> There is currently no learning journey created </p>";
         }

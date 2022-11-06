@@ -292,6 +292,46 @@ const app1 = Vue.createApp({
                       text: "A Learning Journey with the same name already Exists!",
                     });
                   }
+                }).catch((error) => {
+                  axios.delete(url).then((response) => {
+                    console.log(response.data);
+                    console.log(this.lj_name)
+                    let course_list = [];
+                    for (let courseobject of this.skill_courses_list) {
+                      console.log(courseobject);
+                      course_list.push(courseobject["courseID"]);
+                    }
+                    url = "http://localhost:5000/learningjourney"
+
+                    var postObject = {
+                      staff_id: parseInt(staff_id),
+                      lj_name: this.lj_name,
+                      jobrole_id: this.jobroleselection,
+                      lj_id: id,
+                      courses: course_list
+                    }
+
+                    axios
+                      .post(url, postObject)
+                      .then((response) => {
+                        console.log("create response:" + response.data.code);
+                        stat = response.data.code;
+                        if (stat) {
+                          Swal.fire({
+                            title: "Updated!",
+                            text: "Learning Journey has been updated.",
+                            icon: "success",
+                            allowOutsideClick: false,
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              this.disabled = false;
+                              //refresh the current page
+                              location.reload();
+                            }
+                          });
+                        }
+                      });
+                  });
                 });
             }
 

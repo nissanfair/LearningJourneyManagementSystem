@@ -1358,7 +1358,7 @@ def get_learningjourney_name(lj_name):
         )
     return jsonify(
         {
-            "code": 444,
+            "code": 404,
             "message": "LearningJourney not found."
         }
     ), 404

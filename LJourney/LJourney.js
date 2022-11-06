@@ -34,7 +34,8 @@ const app1 = Vue.createApp({
       courses_list: [], //this will hold the courses that can help clear a particular skill
       selected_skill_id: "", //this will hold the currently selected skill id 
       skill_courses_list: [],
-      skill_id: ""
+      skill_id: "",
+      orig_lj_name:"",
     };
   },
   methods: {
@@ -222,6 +223,7 @@ const app1 = Vue.createApp({
           this.jobroleselection = learningjourneyobject.jobrole_id;
           this.job_roles = [learningjourneyobject.linked_jobrole];
           this.lj_name = learningjourneyobject.lj_name;
+          this.orig_lj_name = learningjourneyobject.lj_name;
 
           document.getElementById("jobroleselector").disabled = true;
           document.getElementById("staticBackdropLabel").innerHTML = "Update Learning Journey";
@@ -242,8 +244,8 @@ const app1 = Vue.createApp({
 
               axios.get(`http://localhost:5000/learningjourney/name/${this.lj_name}`)
                 .then((response) => {
-                  // if code is 444, then the learning journey name is not taken
-                  if (response.data.code == 444) {
+                  // if code is 404, then the learning journey name is not taken
+                  if (this.orig_lj_name == this.lj_name || response.data.code == 404) {
                     axios.delete(url).then((response) => {
                       console.log(response.data);
                       console.log(this.lj_name)

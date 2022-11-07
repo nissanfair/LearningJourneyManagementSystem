@@ -119,7 +119,8 @@ INSERT INTO `jobrole` (`jobrole_id`, `jobrole_name`, `jobrole_desc`) VALUES
 
 INSERT INTO `skill` (`skill_id`, `skill_name`, `skill_desc`) VALUES
 (1, 'Data Structures', 'Ability to use data structures such as lists, dictionaries, sets, and tuples to store and manipulate data'),
-(2, 'Data Visualisation', 'An interdisciplinary field that deals with the graphic representation of data and information');
+(2, 'Data Visualisation', 'An interdisciplinary field that deals with the graphic representation of data and information'),
+(3, 'Writing and Communication', 'Written Communication involves expressing yourself clearly, using language with precision');
 
 INSERT INTO `learningjourney` (`lj_id`, `lj_name`, `jobrole_id`,`staff_id`) VALUES
 (1, 'LJ to be swe', '1', 1);

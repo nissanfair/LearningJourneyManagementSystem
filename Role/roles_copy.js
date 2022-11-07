@@ -31,7 +31,7 @@ const app1 = Vue.createApp({
         .get(jobroleUrl)
         .then((response) => {
           // process response.data object
-          console.log(response.data.data);
+          // console.log(response.data.data);
           this.jobrole_name = response.data.data.jobrole_name;
           this.jobrole_desc = response.data.data.jobrole_desc;
 
@@ -42,22 +42,22 @@ const app1 = Vue.createApp({
               jrs[index].skill_id + "-" + jrs[index].skill_name
             );
           }
-          console.log(this.jobroleSkills)
+          // console.log(this.jobroleSkills)
         })
         .catch((error) => {
           // process error object
-          console.log(error.status);
+          // console.log(error.status);
         });
         axios
         .get(skillUrl)
         .then((response) => {
           // process response.data object
-          console.log(response.data.data.skills);
+          // console.log(response.data.data.skills);
           this.skills = response.data.data.skills;
         })
         .catch((error) => {
           // process error object
-          console.log(response.data);
+          // console.log(response.data);
         });
     },
     del(id) {
@@ -137,7 +137,7 @@ const app1 = Vue.createApp({
           })
           .then((response) => {
             // process response.data
-            console.log("create response:" + response.data.code);
+            // console.log("create response:" + response.data.code);
             stat = response.data.code;
             if (stat) {
               Swal.fire({
@@ -158,7 +158,7 @@ const app1 = Vue.createApp({
           .catch((error) => {
             // process error object
             this.disabled = false;
-            console.log(error.response.status);
+            // console.log(error.response.status);
 
             //When jobrole already exists
             if (error.response.status) {
@@ -201,7 +201,7 @@ const app1 = Vue.createApp({
       for (let index = 0; index < this.jobroleSkills.length; index++) {
         selection.push({ skill_id: this.jobroleSkills[index].split("-")[0] });
       }
-      console.log(selection);
+      // console.log(selection);
 
       //first we will update the role name & description
       axios
@@ -210,17 +210,17 @@ const app1 = Vue.createApp({
           jobrole_name: this.jobrole_name,
         })
         .then(function (response) {
-          console.log(response);
-          console.log(response.status);
+          // console.log(response);
+          // console.log(response.status);
           // Now we will update the roleskills selection
           axios
             .put(rsUrl, {
               roleskills: selection,
             })
             .then(function (response) {
-              console.log(response);
-              console.log(response.status);
-              console.log("update response:" + response.data.code);
+              // console.log(response);
+              // console.log(response.status);
+              // console.log("update response:" + response.data.code);
               stat = response.data.code;
               if (stat) {
                 Swal.fire({
@@ -238,11 +238,11 @@ const app1 = Vue.createApp({
               }
             })
             .catch(function (error) {
-              console.log(error);
+              // console.log(error);
             });
         })
         .catch(function (error) {
-          console.log(error);
+          // console.log(error);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -269,12 +269,12 @@ const app1 = Vue.createApp({
       .get(url)
       .then((response) => {
         // process response.data object
-        console.log(response.data.code);
+        // console.log(response.data.code);
         if (response.data.code == 200) {
           this.jobroles = response.data.data.jobroles;
           this_holder = this;
-          console.log(this);
-          console.log(this_holder);
+          // console.log(this);
+          // console.log(this_holder);
           for (let i = 0; i < this.jobroles.length; i++) {
             // iterate through roleskills
             for (let j = 0; j < this.jobroles[i].roleskills.length; j++) {
@@ -287,18 +287,18 @@ const app1 = Vue.createApp({
                 .get(url)
                 .then((response) => {
                   // process response.data object
-                  console.log(response.data.code);
+                  // console.log(response.data.code);
                   if (response.data.code == 200) {
                     skill_name = response.data.data.skill_name;
-                    console.log(i);
-                    console.log(j);
-                    console.log(skill_name);
+                    // console.log(i);
+                    // console.log(j);
+                    // console.log(skill_name);
                   }
                 })
                 .finally(() => {
-                  console.log(skill_name);
+                  // console.log(skill_name);
                   // add skill_name to roleskills
-                  console.log(this_holder);
+                  // console.log(this_holder);
                   this_holder.jobroles[i].roleskills[j].skill_name = skill_name;
                 });
   
@@ -313,9 +313,9 @@ const app1 = Vue.createApp({
       })
       .catch((error) => {
         // process error object
-        console.log(error.response.status);
+        // console.log(error.response.status);
         //When jobroles database is empty
-        if (error.response.status == 404) {
+        if (true) {
           this.message = "<p> There is currently no jobroles created </p>";
         }
       });

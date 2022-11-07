@@ -270,9 +270,9 @@ const app1 = Vue.createApp({
       .get(url)
       .then((response) => {
         // process response.data object
-        console.log(response.data.code);
-        console.log(response.data.data.skills);
-        console.log(response.data.data.skills[0].courseskills);
+        // console.log(response.data.code);
+        // console.log(response.data.data.skills);
+        // console.log(response.data.data.skills[0].courseskills);
         if (response.data.code == 200) {
           this.skills = response.data.data.skills;
           this_holder = this;
@@ -313,10 +313,10 @@ const app1 = Vue.createApp({
       })
       .catch((error) => {
         // process error object
-        console.log(error.response.status);
+        // console.log(error);
         //When skills database is empty
-        if (error.response.status == 404) {
-          this.message = "<p> There is currently no skills available </p>";
+        if (true) {
+          this.message = "<p> There are no skills currently available </p>";
         }
       });
   },

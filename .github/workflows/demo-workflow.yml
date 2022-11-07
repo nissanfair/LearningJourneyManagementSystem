@@ -74,3 +74,21 @@ jobs:
           #Add the command to run all the unittest here.
           python unit_tests.py
           python integration_tests.py
+
+      - name: notify of failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: -771120748
+          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          message: |
+            CI workflow failure! please check the codes!! TDD might have failed!!
+      
+      - name: notify of success
+        if: ${{ success() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: -771120748
+          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          message: |
+            CI workflow success! All automated testing (unit and integration testing) passed!! ^w^

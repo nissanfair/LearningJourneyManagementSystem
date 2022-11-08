@@ -1404,8 +1404,8 @@ def add_learningjourney():
         jobrole_id=jobrole_id,
         lj_id=lj_id)
 
-    if (LearningJourney.query.filter(func.lower(
-            LearningJourney.lj_name) == lj_name).first()):
+    if (LearningJourney.query.filter(
+        LearningJourney.staff_id == staff_id, LearningJourney.lj_name == lj_name).first()):
         return jsonify(
             {
                 "code": 400,

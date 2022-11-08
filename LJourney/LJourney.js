@@ -242,7 +242,7 @@ const app1 = Vue.createApp({
             } else {
               let url = "http://localhost:5000/learningjourney/" + id;
 
-              axios.get(`http://localhost:5000/learningjourney/name/${this.lj_name}`)
+              axios.get(`http://localhost:5000/learningjourney/staff/${staff_id}/name/${this.lj_name}`)
                 .then((response) => {
                   // if code is 404, then the learning journey name is not taken
                   if (this.orig_lj_name == this.lj_name || response.data.code == 404) {
@@ -256,13 +256,14 @@ const app1 = Vue.createApp({
                       }
                       url = "http://localhost:5000/learningjourney"
 
-                      var postObject = {
+                      const postObject = {
                         staff_id: parseInt(staff_id),
                         lj_name: this.lj_name,
                         jobrole_id: this.jobroleselection,
                         lj_id: id,
                         courses: course_list
                       }
+
 
                       axios
                         .post(url, postObject)
@@ -293,7 +294,7 @@ const app1 = Vue.createApp({
                     });
                   }
                 }).catch((error) => {
-                  axios.delete(url).then((response) => {
+                  axios.delete("http://localhost:5000/learningjourney/" + id).then((response) => {
                     console.log(response.data);
                     console.log(this.lj_name)
                     let course_list = [];
@@ -303,7 +304,7 @@ const app1 = Vue.createApp({
                     }
                     url = "http://localhost:5000/learningjourney"
 
-                    var postObject = {
+                    const postObject = {
                       staff_id: parseInt(staff_id),
                       lj_name: this.lj_name,
                       jobrole_id: this.jobroleselection,

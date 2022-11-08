@@ -285,6 +285,65 @@ class TestLearningJourney(TestApp):
 
         print("passed deletion of learning journey test")
 
+    def test_create_learningjourney(self):
+        jr1 = JobRole(
+            jobrole_id=1,
+            jobrole_name='test name',
+            jobrole_desc='test desc'
+        )
+
+        role1 = Role(
+            role_id=1,
+            role_name='test name'
+        )
+
+        staff1 = Staff(
+            staff_id=1,
+            staff_fname='Apple',
+            staff_lname='Tan',
+            dept='HR',
+            email='apple.tan.hr@spm.com',
+            role=1
+        )
+
+        c1 = Course(
+            course_id="IS111",
+            course_name='test name',
+            course_desc='test desc',
+            course_status="Active",
+            course_type="Internal",
+            course_category="Technical",
+        )
+
+        db.session.add(jr1)
+        db.session.add(role1)
+        db.session.add(staff1)
+        db.session.add(c1)
+        db.session.commit()
+
+        response = self.client.post("/learningjourney", json={
+                "staff_id": 1,
+                "lj_name": "test lj name",
+                "jobrole_id": 1,
+                "courses": [
+                    "IS111"
+                ]
+            }
+        )
+
+        self.assertEqual(response.json, {
+            'code': 201,
+            'data': {'jobrole_id': 1,
+            'lj_id': 1,
+            'lj_name': 'test lj name',
+            'ljcourses': [{'course_id': 'IS111', 'lj_id': 1, 'ljc_id': 1}],
+            'staff_id': 1}
+        })
+        print("passed learning journey creation test")
+
+
+        
+
 # Testing of role folder
 
 

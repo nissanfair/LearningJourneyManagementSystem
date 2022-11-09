@@ -1,5 +1,0 @@
-DBpassword:
-DBport:3306
-DBusername:root
-DBhost:localhost
-DBname:ljms

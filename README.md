@@ -7,12 +7,23 @@ Does CRUD for Jobroles, Skills and learning journey.
 Application backend: Python Flask
 Application Frontend: html, bootstrap, javascript
 
+# Importing CSV File:
+<ol>
+  <li>Type localhost in url</li>
+  <li>Access PHPMyAdmin and login</li>
+  <li>Go to the ljms schema</li>
+  <li>Under Course, Role, Staff and Registration import the respective CSV</li>
+  <li>Ensure the following checkboxes are ticked when importing: </li>
+  <li>Update data when duplicate keys found on import (add ON DUPLICATE KEY UPDATE) & Do not abort on INSERT error</li>
+</ol>
+
 # How to start the application:
 <ol>
   <li>Check api_app.py file, change the configurations(DBpassword, DBport, DBusername, DBhost, DBname) accordingly</li>
   <li>Those are for connecting to the database</li>
+  <li>Run WAMP/MAMP</li>
   <li>Run the api_app.py file</li>
-  <li>Open index.html to access the homepage</li>
+  <li>Open Home/index.html to access the homepage</li>
   <li>You can start using now!</li>
 </ol>
 

@@ -60,7 +60,7 @@ jobs:
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
         with:
-          to: to: ${{ secrets.TELEGRAM_TO }}
+          to: ${{ secrets.TELEGRAM_TO }}
           token: token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             CI workflow failure! please check the codes!! TDD might have failed!!

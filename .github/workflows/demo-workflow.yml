@@ -14,8 +14,8 @@ jobs:
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
         with:
-          to: -771120748
-          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             Hi!! ^w^ someone pushed a change to our repository!!
             
@@ -60,8 +60,8 @@ jobs:
         if: ${{ failure() }}
         uses: appleboy/telegram-action@master
         with:
-          to: -771120748
-          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          to: to: ${{ secrets.TELEGRAM_TO }}
+          token: token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             CI workflow failure! please check the codes!! TDD might have failed!!
       
@@ -70,7 +70,7 @@ jobs:
         if: ${{ success() }}
         uses: appleboy/telegram-action@master
         with:
-          to: -771120748
-          token: 2062650826:AAFYO8AnpEVy23ma1N84wpefkNoS-jctqRU
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             CI workflow success! All automated testing (unit and integration testing) passed!! ^w^
